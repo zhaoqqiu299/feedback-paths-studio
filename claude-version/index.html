@@ -1,0 +1,829 @@
+<title>Feedback Paths Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout concept: a writing studio. Draft on the left, feedback threads in the middle, an "agency" instrument panel on the right that shows who is doing the thinking. Same pale yellow-green and deep green identity as the Feedback Paths project page. */
+:root{
+  --base:#F2F7E1; --cream:#FBFCEF; --sage:#E4EECB; --mint:#DCEBDD; --paper:#FFFFFF;
+  --ink:#13211A; --muted:#55665C; --line:#D3DEC3;
+  --accent:#1F5C4F; --on-accent:#FFFFFF; --lime:#B9D46A; --accent-soft:#D7E8CF;
+  --peer:#A9760E; --peer-soft:#F6EBCF; --ai:#2860C4; --ai-soft:#DFE8F8;
+  --c-ack:#768379; --c-diff:#A9760E; --c-reason:#2860C4; --c-eval:#7343AE; --c-transfer:#14785A; --c-other:#8A8F8C;
+  --ins:#14785A; --ins-bg:#CFEEDC; --del:#B42430; --del-bg:#FADFE1; --warn:#B4632A;
+  --f:"Inter","Helvetica Neue",Arial,sans-serif; --m:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --base:#0F1812; --cream:#131E17; --sage:#17251B; --mint:#112019; --paper:#1C2B22;
+  --ink:#E6EFE6; --muted:#9CB0A3; --line:#2B3A30;
+  --accent:#86D0B7; --on-accent:#0F1812; --lime:#7E9A35; --accent-soft:#1E3A2F;
+  --peer:#E2B04A; --peer-soft:#3A2F14; --ai:#83ACF2; --ai-soft:#1C2A44;
+  --c-ack:#9DAAA0; --c-diff:#E2B04A; --c-reason:#83ACF2; --c-eval:#BB96EA; --c-transfer:#66CEA2; --c-other:#9AA09C;
+  --ins:#66CEA2; --ins-bg:#163628; --del:#F2878F; --del-bg:#3D1C20; --warn:#E89A62; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --base:#0F1812; --cream:#131E17; --sage:#17251B; --mint:#112019; --paper:#1C2B22;
+  --ink:#E6EFE6; --muted:#9CB0A3; --line:#2B3A30;
+  --accent:#86D0B7; --on-accent:#0F1812; --lime:#7E9A35; --accent-soft:#1E3A2F;
+  --peer:#E2B04A; --peer-soft:#3A2F14; --ai:#83ACF2; --ai-soft:#1C2A44;
+  --c-ack:#9DAAA0; --c-diff:#E2B04A; --c-reason:#83ACF2; --c-eval:#BB96EA; --c-transfer:#66CEA2; --c-other:#9AA09C;
+  --ins:#66CEA2; --ins-bg:#163628; --del:#F2878F; --del-bg:#3D1C20; --warn:#E89A62; color-scheme:dark; }
+*{box-sizing:border-box}
+body{background:var(--base); color:var(--ink); font-family:var(--f); font-size:15px; line-height:1.55}
+h1,h2,h3,h4{margin:0; line-height:1.2; letter-spacing:-0.01em}
+p{margin:0}
+button{font-family:var(--f); cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.pad{padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1360px; margin:0 auto}
+.muted{color:var(--muted)}
+.small{font-size:.82rem}
+.mono{font-family:var(--m)}
+
+/* top bar */
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--base)}
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:6; background:color-mix(in srgb, var(--base) 90%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+.top .wrap{display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:10px; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:8px; font-weight:800}
+.brand i{display:inline-flex; gap:2px}
+.brand i b{width:4px; height:14px; border-radius:2px; display:block}
+.brand span{font-weight:500; color:var(--muted); font-size:.85rem}
+.tabs{display:flex; gap:4px; background:var(--sage); padding:4px; border-radius:12px}
+.tab{border:0; background:transparent; color:var(--muted); font-weight:600; font-size:.88rem; padding:7px 14px; border-radius:9px}
+.tab[aria-selected="true"]{background:var(--paper); color:var(--ink); box-shadow:0 2px 8px -4px rgba(20,60,40,.4)}
+.status{display:flex; gap:8px; align-items:center; font-size:.78rem; color:var(--muted)}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--c-other); display:inline-block}
+.dot.on{background:var(--ins); box-shadow:0 0 0 4px color-mix(in srgb, var(--ins) 20%, transparent)}
+
+/* stepper */
+.stepper{display:flex; gap:6px; flex-wrap:wrap; padding-block:16px 4px}
+.step{display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--cream); color:var(--muted); border-radius:999px; padding:6px 12px 6px 6px; font-size:.84rem; font-weight:600}
+.step b{width:22px; height:22px; border-radius:50%; display:grid; place-items:center; background:var(--sage); color:var(--muted); font-size:.75rem}
+.step.done{color:var(--ink)} .step.done b{background:var(--accent-soft); color:var(--accent)}
+.step.cur{border-color:var(--accent); color:var(--ink); background:var(--paper)} .step.cur b{background:var(--accent); color:var(--on-accent)}
+
+/* layout */
+.studio{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1.15fr) minmax(0,.8fr); gap:16px; padding-block:12px 40px; align-items:start}
+@media (max-width: 1180px){ .studio{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} .agency{grid-column:1 / -1} }
+@media (max-width: 760px){ .studio{grid-template-columns:minmax(0,1fr)} }
+.panel{background:var(--paper); border-radius:16px; padding:18px; display:grid; gap:12px; align-content:start; min-width:0}
+.panel.tint{background:var(--cream)}
+.ph{display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap}
+.ph h2{font-size:1.02rem}
+.eyebrow{font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent)}
+.task{background:var(--base); border-radius:10px; padding:10px 12px; font-size:.88rem}
+textarea, input[type="text"], select{width:100%; font:inherit; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:10px 12px}
+textarea{resize:vertical; line-height:1.6}
+textarea:focus, input[type="text"]:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft)}
+#draft, #revision{min-height:220px; font-size:.95rem}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--accent); background:var(--accent); color:var(--on-accent); font-weight:600; font-size:.86rem; padding:8px 14px; border-radius:10px; transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.line{background:transparent; color:var(--accent)}
+.btn.ghost{border-color:var(--line); background:var(--paper); color:var(--ink)}
+.btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.wc{font-size:.76rem; color:var(--muted); font-variant-numeric:tabular-nums}
+.sentences{display:grid; gap:4px; font-size:.92rem; line-height:1.55}
+.sent{padding:4px 8px; border-radius:6px; border-left:3px solid transparent}
+.sent.hl-ai{background:var(--ai-soft); border-left-color:var(--ai)}
+.sent.hl-peer{background:var(--peer-soft); border-left-color:var(--peer)}
+.sent.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{box-shadow:0 0 0 0 var(--lime)}40%{box-shadow:0 0 0 4px var(--lime)}100%{box-shadow:0 0 0 0 transparent}}
+
+/* feedback threads */
+.lanes{display:flex; gap:6px}
+.lanebtn{border:1px solid var(--line); background:var(--cream); border-radius:999px; padding:4px 10px; font-size:.78rem; font-weight:600; color:var(--muted)}
+.lanebtn[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.item{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--paper)}
+.item.open{box-shadow:0 18px 30px -26px rgba(20,60,40,.6)}
+.ihead{width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:10px; align-items:start; padding:12px 14px; background:transparent; border:0; text-align:left; color:var(--ink)}
+.src{font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px}
+.src.ai{background:var(--ai-soft); color:var(--ai)} .src.peer{background:var(--peer-soft); color:var(--peer)}
+.ihead .t{font-size:.9rem}
+.ihead .meta{font-size:.72rem; color:var(--muted); margin-top:3px}
+.badge{font-size:.7rem; font-weight:700; padding:3px 8px; border-radius:999px; background:var(--sage); color:var(--muted); white-space:nowrap}
+.badge.acc{background:var(--ins-bg); color:var(--ins)} .badge.rej{background:var(--del-bg); color:var(--del)} .badge.adp{background:var(--accent-soft); color:var(--accent)}
+.ibody{padding:0 14px 14px; display:grid; gap:10px}
+.thread{display:grid; gap:8px}
+.turn{display:grid; gap:4px; max-width:92%}
+.turn.student{justify-self:end}
+.bubble{padding:9px 12px; border-radius:12px; font-size:.88rem; line-height:1.5}
+.turn.ai .bubble{background:var(--ai-soft)} .turn.peer .bubble{background:var(--peer-soft)} .turn.student .bubble{background:var(--sage)}
+.turn .who{font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.turn.student .who{text-align:right}
+.coded{display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:flex-end; font-size:.72rem}
+.code{display:inline-flex; align-items:center; gap:5px; font-family:var(--m); font-weight:600; font-size:.68rem; color:var(--cc); border:1px solid currentColor; padding:2px 7px; border-radius:999px}
+.code::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor}
+.ev{color:var(--muted); font-style:italic}
+.why{font-size:.74rem; color:var(--muted); background:var(--base); border-radius:8px; padding:6px 9px; display:flex; gap:8px; align-items:flex-start}
+.why .lv{font-family:var(--m); font-weight:600; color:var(--accent); white-space:nowrap}
+.compose{display:grid; gap:8px}
+.compose textarea{min-height:58px; font-size:.88rem}
+.helps{display:flex; flex-wrap:wrap; gap:6px}
+.help{border:1px solid var(--line); background:var(--cream); color:var(--ink); border-radius:999px; padding:5px 10px; font-size:.78rem; font-weight:600}
+.help:hover{border-color:var(--accent)}
+.help small{color:var(--muted); font-weight:500}
+.decide{display:grid; gap:8px; background:var(--base); border-radius:12px; padding:10px}
+.decide .opts{display:flex; gap:6px; flex-wrap:wrap}
+.opt{border:1.5px solid var(--line); background:var(--paper); border-radius:10px; padding:6px 12px; font-size:.82rem; font-weight:600; color:var(--ink)}
+.opt[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
+.typing{display:inline-flex; gap:3px} .typing i{width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1s infinite} .typing i:nth-child(2){animation-delay:.15s} .typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+
+/* agency panel */
+.agency{position:sticky; top:72px}
+@media (max-width: 1180px){ .agency{position:static} }
+.meter{display:grid; gap:6px}
+.meter .bar{height:10px; border-radius:6px; background:color-mix(in srgb, var(--ai) 22%, transparent); overflow:hidden; display:flex}
+.meter .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--lime), var(--accent)); transition:width .6s ease}
+.kv{display:flex; justify-content:space-between; gap:8px; font-size:.84rem}
+.kv b{font-variant-numeric:tabular-nums}
+.ctl{display:grid; gap:6px}
+.seg{display:flex; background:var(--base); border-radius:10px; padding:3px; gap:3px}
+.seg button{flex:1; border:0; background:transparent; border-radius:8px; padding:6px 4px; font-size:.76rem; font-weight:600; color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--paper); color:var(--ink); box-shadow:0 2px 6px -3px rgba(20,60,40,.4)}
+.switch{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:.84rem}
+.switch input{width:38px; height:22px; accent-color:var(--accent)}
+.mini-title{font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.spark{width:100%; height:auto; display:block}
+.codebars{display:grid; gap:6px; font-size:.78rem}
+.cbrow{display:grid; grid-template-columns:44px minmax(0,1fr); gap:8px; align-items:center}
+.stack{display:flex; height:12px; border-radius:6px; overflow:hidden; background:var(--base)}
+.stack i{display:block; height:100%}
+.legend{display:flex; flex-wrap:wrap; gap:8px; font-size:.7rem; color:var(--muted)}
+.legend span{display:inline-flex; align-items:center; gap:4px}
+.legend span::before{content:""; width:8px; height:8px; border-radius:2px; background:var(--lc)}
+.principles{display:grid; gap:6px; font-size:.78rem; color:var(--muted)}
+.principles li{margin-left:1em}
+
+/* analysis */
+.diff{display:grid; gap:6px; font-size:.88rem}
+.drow{display:grid; grid-template-columns:86px minmax(0,1fr); gap:8px; align-items:start; padding:6px 8px; border-radius:8px; background:var(--base)}
+.drow .k{font-size:.68rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); padding-top:2px}
+.drow .chips{display:flex; flex-wrap:wrap; gap:4px; margin-top:4px}
+ins{background:var(--ins-bg); color:var(--ins); text-decoration:none; border-radius:3px; padding:0 2px}
+del{background:var(--del-bg); color:var(--del); border-radius:3px; padding:0 2px}
+.chip{font-size:.68rem; font-weight:700; padding:2px 7px; border-radius:999px; background:var(--sage); color:var(--muted)}
+.chip.ai{background:var(--ai-soft); color:var(--ai)} .chip.own{background:var(--ins-bg); color:var(--ins)} .chip.warn{background:var(--peer-soft); color:var(--peer)}
+.journey{display:grid; gap:8px}
+.jcard{border:1px solid var(--line); border-radius:12px; padding:10px 12px; display:grid; gap:6px; background:var(--paper)}
+.jsteps{display:flex; flex-wrap:wrap; gap:4px; align-items:center; font-size:.74rem}
+.jsteps span{background:var(--base); border-radius:6px; padding:3px 7px; font-weight:600}
+.jsteps span.on{background:var(--accent); color:var(--on-accent)}
+.jsteps em{font-style:normal; color:var(--muted)}
+.quad{font-size:.78rem; font-weight:700}
+.reflect{display:grid; gap:10px}
+.reflect label{font-size:.84rem; font-weight:600}
+.notice{background:var(--peer-soft); color:var(--ink); border-radius:10px; padding:10px 12px; font-size:.84rem}
+.ok{background:var(--ins-bg); border-radius:10px; padding:10px 12px; font-size:.86rem}
+
+/* teacher */
+.tgrid{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px; padding-block:12px}
+.kpi{background:var(--paper); border-radius:14px; padding:14px 16px; display:grid; gap:2px}
+.kpi b{font-size:1.5rem; font-variant-numeric:tabular-nums}
+.kpi span{font-size:.78rem; color:var(--muted)}
+.tcols{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; padding-bottom:14px}
+.tcols3{display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr); gap:14px; padding-bottom:40px}
+@media (max-width: 980px){ .tgrid{grid-template-columns:repeat(2, minmax(0,1fr))} .tcols, .tcols3{grid-template-columns:minmax(0,1fr)} }
+.hbar{display:grid; grid-template-columns:120px minmax(0,1fr) 40px; gap:8px; align-items:center; font-size:.8rem}
+.hbar .t{height:10px; border-radius:5px; background:var(--base); overflow:hidden}
+.hbar .t i{display:block; height:100%; background:linear-gradient(90deg, var(--lime), var(--accent))}
+.hbar .v{text-align:right; color:var(--muted); font-variant-numeric:tabular-nums}
+.flag{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; padding:10px 12px; border-radius:10px; background:var(--base); font-size:.84rem; align-items:center}
+.flag .sug{font-size:.76rem; color:var(--muted); margin-top:2px}
+.slist{display:grid; gap:6px}
+.sbtn{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; text-align:left; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:.86rem}
+.sbtn[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
+.srcsel{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.override{display:inline-flex; gap:4px; align-items:center; font-size:.72rem}
+.override select{width:auto; padding:2px 6px; font-size:.72rem; border-radius:6px}
+.demo-tag{font-size:.7rem; font-weight:700; color:var(--peer); background:var(--peer-soft); padding:2px 8px; border-radius:999px}
+table{border-collapse:collapse; width:100%; font-size:.82rem}
+th, td{text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.scroll{overflow-x:auto}
+@media (prefers-reduced-motion: reduce){ *, *::before, *::after{animation:none!important; transition:none!important} }
+</style>
+
+<header class="top pad">
+  <div class="wrap">
+    <div class="brand"><i aria-hidden="true"><b style="background:var(--c-ack)"></b><b style="background:var(--c-diff)"></b><b style="background:var(--c-reason)"></b><b style="background:var(--c-eval)"></b></i>Feedback Paths <span>Studio · prototype</span></div>
+    <div class="tabs" role="tablist" aria-label="View">
+      <button class="tab" role="tab" id="tab-student" aria-selected="true" data-view="student">Student</button>
+      <button class="tab" role="tab" id="tab-teacher" aria-selected="false" data-view="teacher">Teacher</button>
+    </div>
+    <div class="status" id="status"><span class="dot" id="ai-dot"></span><span id="ai-label">Connecting to AI…</span></div>
+  </div>
+</header>
+
+<main>
+  <section id="view-student" class="pad"><div class="wrap" id="student"></div></section>
+  <section id="view-teacher" class="pad" hidden><div class="wrap" id="teacher"></div></section>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ================= utilities ================= */
+var $ = function(s, r){ return (r||document).querySelector(s); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function sentences(t){ return (String(t||'').replace(/\s+/g,' ').trim().match(/[^.!?]+[.!?]+["”’)]*|[^.!?]+$/g) || []).map(function(s){ return s.trim(); }).filter(Boolean); }
+function toks(t){ return String(t||'').toLowerCase().replace(/[^a-z0-9%\s']/g,' ').split(/\s+/).filter(Boolean); }
+function jac(a,b){ var A=new Set(toks(a)), B=new Set(toks(b)); if(!A.size&&!B.size) return 1; var i=0; A.forEach(function(x){ if(B.has(x)) i++; }); return i/(A.size+B.size-i); }
+function grams(t,n){ var w=toks(t), g=[]; for(var i=0;i+n<=w.length;i++) g.push(w.slice(i,i+n).join(' ')); return g; }
+function words(t){ return toks(t).length; }
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+function store(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function load(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
+
+/* ================= constants ================= */
+var CODES = {
+  ACK:{name:'Acknowledgment', color:'var(--c-ack)', icap:'Active'},
+  DIFF:{name:'Noticing difficulty', color:'var(--c-diff)', icap:'Active+'},
+  REASON:{name:'Explanation', color:'var(--c-reason)', icap:'Constructive'},
+  EVAL:{name:'Critical evaluation', color:'var(--c-eval)', icap:'Constructive'},
+  TRANSFER:{name:'Transfer', color:'var(--c-transfer)', icap:'Constructive'},
+  OTHER:{name:'Other / off-task', color:'var(--c-other)', icap:'—'}
+};
+var LEVELS = ['L0 · no intervention','L1 · metacognitive prompt','L2 · locate','L3 · strategy hint','L4 · concept explanation','L5 · modelled revision'];
+var TYPES = {'claim-evidence':'Claim–evidence link','counterargument':'Counterargument','cohesion':'Cohesion','specificity':'Specificity','organization':'Organization','language':'Language use'};
+var TASK = 'Should schools move more classes online? Write a short argumentative paragraph (120–180 words) with a clear claim, evidence, and a response to one counterargument.';
+var SAMPLE = 'Online classes are better for students than traditional classes. A 2023 survey found that 70% of teachers prefer using online tools. Students can study at home, so they save time. However, some people think online classes are boring. In conclusion, schools should move all classes online.';
+var PRESET_AI = [
+  {type:'claim-evidence', anchor:'A 2023 survey found that 70% of teachers prefer using online tools.', text:'Your evidence is about teachers, but your claim is about students. Take another look at how this survey connects to what you say about students.'},
+  {type:'counterargument', anchor:'However, some people think online classes are boring.', text:'You raise a counterargument here, but the paragraph moves on without responding to it.'},
+  {type:'cohesion', anchor:'Students can study at home, so they save time.', text:'This point about saving time is not yet connected back to why online classes are "better".'}
+];
+var PRESET_PEER = [
+  {type:'organization', anchor:'In conclusion, schools should move all classes online.', text:'"All classes" feels really strong to me. I\'m not sure your paragraph proves that much.'},
+  {type:'specificity', anchor:'Online classes are better for students than traditional classes.', text:'Your first sentence is clear, I knew your position right away. Maybe say better in what way?'}
+];
+var TEMPLATES = {
+  metacog:'Before changing anything: which sentence do you think this comment is about, and what is the problem there?',
+  explain_change:'Before you move on: which part of the original sentence was the problem, and how will your revision fix it?',
+  probe_disagree:'That is your call to make. What in your paragraph already does what the comment asks? Point to the words.',
+  confirm:'That reasoning works. You know what to change, so make it your way.',
+  handback:'Okay, over to you. Come back if you want another look.',
+  locate:{ 'claim-evidence':'Put your claim and your evidence side by side. Who is the evidence about, and who is the claim about?', 'counterargument':'Find the sentence where you mention the other side. What comes right after it?', 'cohesion':'Look at how this sentence connects to your main claim. Is that link written down, or only in your head?', _:'Reread the highlighted sentence. What is it trying to do in the paragraph?' },
+  strategy:{ 'claim-evidence':'Try one of two moves: narrow the claim to what the evidence shows, or add a sentence explaining how the evidence supports the claim.', 'counterargument':'A common pattern is to concede, then respond: admit what is true about the other view, then explain why your claim still holds.', 'cohesion':'Add a short linking phrase or sentence that says why this point supports your claim (for example, "This matters because…").', _:'Say in one sentence what this part should do, then check whether the text does it.' },
+  concept:{ 'claim-evidence':'A claim–evidence link means the evidence is about the same thing as the claim, and you explain why it supports it. Data about teachers cannot directly prove something about students.', 'counterargument':'A counterargument strengthens an argument only when you answer it. Mentioning it without a response can make your position look weaker.', 'cohesion':'Cohesion is how sentences connect. Readers need the link between a point and the claim to be stated, not guessed.', _:'Each sentence should serve the claim. If its role is unclear, readers lose the thread.' },
+  model:{ 'claim-evidence':'One direction (write it in your own words): "Online classes can make learning more flexible. In a 2023 survey, 70% of teachers preferred online tools, which suggests…" Then explain what this means for students.', 'counterargument':'One direction (write it in your own words): "Some people find online classes boring. However, interactive tools such as… can keep students engaged."', 'cohesion':'One direction (write it in your own words): "…so they save time, which they can use for…" Then link it back to your claim.', _:'One direction: restate the point and add a sentence that links it to your claim. Then explain the change in your own words.' }
+};
+
+/* ================= capabilities ================= */
+var sample = null, db = null, user = null, me = { id:null, canEdit:false };
+function setStatus(){
+  var on = !!sample;
+  $('#ai-dot').classList.toggle('on', on);
+  $('#ai-label').textContent = on ? 'AI coach live (Claude)' : 'Offline mode · rule-based coach';
+}
+setTimeout(function(){ if(!sample) setStatus(); }, 11000);
+if (window.claude && window.claude.use){
+  window.claude.use('sample').then(function(s){ sample = s; setStatus(); }).catch(function(){ setStatus(); });
+  window.claude.use('user').then(function(u){
+    user = u; if(!u) return;
+    Promise.all([u.id().catch(function(){return null;}), u.canEdit().catch(function(){return false;})]).then(function(r){ me.id = r[0]; me.canEdit = !!r[1]; renderTeacher(); });
+  }).catch(function(){});
+  window.claude.use('db').then(function(d){ db = d; if (d) subscribeSessions(); renderStudent(); }).catch(function(){});
+} else { setTimeout(setStatus, 50); }
+
+function llm(prompt, tier){
+  if (!sample) return Promise.reject({code:'offline'});
+  return sample.json(prompt, {modelTier: tier || 'quick'});
+}
+
+/* ================= student state ================= */
+function fresh(){
+  return { step:1, task:TASK, draft:SAMPLE, revision:'', style:'questions', paused:false, lane:'all',
+    items:[], open:null, helpLog:[], levelTrail:[], aiTexts:[], analysis:null, reflection:{changed:'',kept:'',ai:''}, submitted:null, busy:false, peerDraft:'' };
+}
+var S = load('fp-studio-v1') || fresh();
+S.busy = false;
+function save(){ store('fp-studio-v1', S); }
+
+/* ================= coding ================= */
+function heuristicCode(text){
+  var t = text.toLowerCase().trim();
+  var m;
+  if (/(also|same (problem|thing)|other paragraph|elsewhere|next time|in general)/.test(t) && /(should|will|could|need)/.test(t)) return {code:'TRANSFER', evidence:(t.match(/(also[^.?!]*|other paragraph[^.?!]*|next time[^.?!]*)/)||[text])[0]};
+  if (m = t.match(/(i disagree|i don'?t think so|already|but i (think|meant)|not (really )?true)[^.?!]*/)) return {code:'EVAL', evidence:m[0]};
+  if (m = t.match(/(because|since|so that|which means|the problem is|it doesn'?t|this shows|that'?s why)[^.?!]*/)) return {code:'REASON', evidence:m[0]};
+  if (m = t.match(/(i don'?t (understand|get|know)|why is|what do you mean|confus|not sure|unclear)[^.?!]*/)) return {code:'DIFF', evidence:m[0]};
+  if (/\?$/.test(t)) return {code:'DIFF', evidence:text};
+  if (m = t.match(/^(ok|okay|sure|got it|yes|yeah|fine|will do|i'?ll (change|fix)|thanks|thank you)[^.?!]*/)) return {code:'ACK', evidence:m[0]};
+  if (words(t) <= 5) return {code:'ACK', evidence:text};
+  return {code:'OTHER', evidence:text};
+}
+function codeTurn(item, text){
+  var prior = item.thread.filter(function(x){ return x.who!=='student'; }).slice(-1)[0];
+  var prompt = 'You are coding a student\'s reply to writing feedback, using a research codebook. Code only observable evidence, never infer hidden thinking.\n'
+   + 'Codes: ACK (simple acceptance, little reasoning), DIFF (notices a difficulty or asks for clarification), REASON (explains why or how, linking feedback to the text), EVAL (critically evaluates or disagrees with reasons), TRANSFER (applies the feedback beyond this spot), OTHER.\n'
+   + 'Feedback type: ' + item.type + '\nFeedback/previous turn: "' + (prior?prior.text:item.text) + '"\nTarget sentence: "' + item.anchor + '"\nStudent reply: "' + text + '"\n'
+   + 'Also judge "accurate": for REASON or EVAL, is the student\'s reasoning consistent with the actual problem in the target sentence (true/false)? Otherwise null.\n'
+   + 'Return JSON only: {"code":"ACK|DIFF|REASON|EVAL|TRANSFER|OTHER","evidence":"exact substring of the student reply","accurate":true|false|null,"confidence":0-1,"rationale":"max 15 words"}';
+  return llm(prompt,'quick').then(function(r){
+    if (!r || !CODES[r.code]) throw 0;
+    return { code:r.code, evidence: (r.evidence && text.indexOf(r.evidence)>-1) ? r.evidence : text, accurate: (r.accurate===true||r.accurate===false)?r.accurate:null, confidence: typeof r.confidence==='number'?r.confidence:null, rationale:r.rationale||'', by:'llm' };
+  }).catch(function(){ var h = heuristicCode(text); return { code:h.code, evidence:h.evidence, accurate:null, confidence:null, rationale:'keyword rules (offline)', by:'rules' }; });
+}
+
+/* ================= scaffolding policy (explicit) ================= */
+function moveFor(level){ return ['handback','metacog','locate','strategy','concept','model'][level]; }
+function policy(item, coded, help){
+  var lv = item.level, move, why;
+  if (help === 'done'){ lv = 0; move = 'handback'; why = 'Student says they have it. Control goes back to the student.'; }
+  else if (help === 'executive'){ item.exec = (item.exec||0)+1; lv = clamp(Math.max(lv,3) + (item.exec>=2?1:0) + (item.exec>=3?1:0), 0, 5); move = moveFor(lv); why = 'Asked for the answer (executive help-seeking, request #' + item.exec + '). Strategy first; a modelled revision only after repeated requests.'; }
+  else if (help === 'instrumental'){ lv = clamp(Math.max(lv,1)+1, 1, 4); move = moveFor(lv); why = 'Asked to understand (instrumental help-seeking). Step up one level.'; }
+  else if (help === 'example'){ lv = 4; move = 'concept'; why = 'Asked for an example. Concept explanation with an example, still no rewrite.'; }
+  else {
+    var c = coded.code;
+    if (c === 'ACK'){ item.ack = (item.ack||0)+1; lv = 1; move = 'explain_change'; why = 'Accepted without explaining. Unexplained acceptance is weak evidence, so the coach asks for reasoning.'; }
+    else if (c === 'DIFF'){ lv = clamp(Math.max(2, lv+1), 2, 4); move = moveFor(lv); why = 'Noticed a difficulty. Step up support.'; }
+    else if (c === 'REASON' || c === 'TRANSFER'){
+      if (coded.accurate === false){ lv = 4; move = 'concept'; why = 'Explains, but the reasoning misses the problem (possible misconception). Concept explanation.'; }
+      else { item.acc = (item.acc||0)+1; S.streak = (S.streak||0)+1; lv = clamp(lv-1, 0, 5); if (S.streak>=3) lv = 0; move = lv<=1 ? 'confirm' : moveFor(lv); why = 'Accurate explanation (' + S.streak + ' in a row). Support fades' + (S.streak>=3?' to none after three.':'.'); }
+    }
+    else if (c === 'EVAL'){ lv = 1; move = 'probe_disagree'; why = 'Disagrees. Ask for evidence from the text; the student may keep their choice.'; }
+    else { lv = 2; move = 'locate'; why = 'Unclear reply. Point back to the relevant sentence.'; }
+  }
+  if (help || coded.code==='ACK' || coded.code==='DIFF' || coded.accurate===false) S.streak = (help==='done') ? S.streak : 0;
+  item.level = lv;
+  S.levelTrail.push({level:lv, item:item.id});
+  return {level:lv, move:move, why:why};
+}
+function templateFor(move, type){ var t = TEMPLATES[move]; return typeof t === 'string' ? t : (t[type] || t._); }
+function phrase(item, decision){
+  var fallback = templateFor(decision.move, item.type);
+  if (!sample) return Promise.resolve({text:fallback, by:'template'});
+  var history = item.thread.slice(-6).map(function(x){ return (x.who==='student'?'Student':'Coach') + ': ' + x.text; }).join('\n');
+  var rules = {
+    handback:'Hand control back in one short sentence. No new feedback.',
+    confirm:'Affirm the student\'s reasoning briefly and hand the revision back to them. Do not add suggestions.',
+    metacog:'Ask one metacognitive question that makes the student locate and name the problem themselves. No hints about the fix.',
+    explain_change:'Ask the student to explain which part of the original sentence was problematic and how their revision will address it.',
+    probe_disagree:'Respect that the student may keep their choice. Ask them to point to words in their paragraph that support their position. Do not argue.',
+    locate:'Point the student to the specific sentence or link that has the problem, as a question. Do not suggest a fix.',
+    strategy:'Offer one general revision strategy. Do not write any sentence for them.',
+    concept:'Explain the underlying writing concept briefly, with a short example on a DIFFERENT topic. Do not rewrite their sentence.',
+    model:'Offer one possible direction as a partial model, clearly marked "in your own words", then ask the student to explain the change.'
+  }[decision.move];
+  var styleNote = {questions:'Prefer phrasing as a question.', hints:'Prefer short hints.', explain:'Prefer brief explanations.'}[S.style];
+  var prompt = 'You are a writing coach for an English learner (high school to university). You do NOT decide what kind of help to give: a separate policy already chose it. Follow it exactly.\n'
+    + 'Help level: ' + LEVELS[decision.level] + '. Move: ' + decision.move + '. Instruction: ' + rules + ' ' + styleNote + '\n'
+    + 'Never rewrite the student\'s sentences unless the move is "model". Max 45 words. Plain, friendly, specific.\n'
+    + 'Task: ' + S.task + '\nTarget sentence: "' + item.anchor + '"\nFeedback issue: ' + item.text + '\nRecent dialogue:\n' + history + '\n'
+    + 'Return JSON only: {"message":"...","gives_answer":true|false}';
+  return llm(prompt,'quick').then(function(r){
+    if (!r || !r.message) throw 0;
+    if (r.gives_answer && decision.level < 5) return {text:fallback, by:'template (checker blocked an answer)'};
+    return {text:r.message, by:'llm'};
+  }).catch(function(){ return {text:fallback, by:'template'}; });
+}
+
+/* ================= feedback generation ================= */
+function anchorIndex(anchor, sents){ var best=-1, bs=0; sents.forEach(function(s,i){ var j=jac(s,anchor); if(j>bs){bs=j;best=i;} }); return bs>0.3?best:-1; }
+function makeItem(src, f){ return { id:uid(), source:src, type:TYPES[f.type]?f.type:'organization', anchor:f.anchor, text:f.text, thread:[{who:src, text:f.text}], level:2, decision:null, align:null }; }
+function startFeedback(){
+  S.busy = true; S.step = 2; renderStudent();
+  var sents = sentences(S.draft);
+  var isSample = jac(S.draft, SAMPLE) > 0.9;
+  var peers = isSample ? PRESET_PEER.map(function(f){ return makeItem('peer', f); }) : [];
+  function finish(aiFs){
+    S.items = aiFs.map(function(f){ return makeItem('ai', f); }).concat(peers);
+    S.aiTexts = S.items.filter(function(i){ return i.source==='ai'; }).map(function(i){ return i.text; });
+    S.levelTrail = S.items.filter(function(i){return i.source==='ai';}).map(function(i){ return {level:2, item:i.id}; });
+    S.revision = S.draft; S.busy = false; S.open = S.items[0] ? S.items[0].id : null; save(); renderStudent();
+  }
+  if (!sample){ finish(isSample ? PRESET_AI : genericFeedback(sents)); return; }
+  var prompt = 'You give formative feedback on an English learner\'s argumentative paragraph. Identify up to 3 of the most important issues about argument and organisation (claim-evidence, counterargument, cohesion, specificity, organization), not grammar.\n'
+    + 'For each: quote the EXACT sentence from the draft it concerns, and describe the problem in 1–2 sentences WITHOUT suggesting a rewrite or fix.\n'
+    + 'Task: ' + S.task + '\nDraft: """' + S.draft + '"""\n'
+    + 'Return JSON only: {"items":[{"type":"claim-evidence|counterargument|cohesion|specificity|organization","anchor":"exact sentence","text":"problem description"}]}';
+  llm(prompt,'default').then(function(r){
+    var fs = (r && r.items || []).filter(function(f){ return f && f.text && f.anchor; }).slice(0,3);
+    fs.forEach(function(f){ var k = anchorIndex(f.anchor, sents); if (k>-1) f.anchor = sents[k]; });
+    if (!fs.length) throw 0;
+    finish(fs);
+  }).catch(function(){ finish(isSample ? PRESET_AI : genericFeedback(sents)); });
+}
+function genericFeedback(sents){
+  var out = [];
+  if (sents[1]) out.push({type:'claim-evidence', anchor:sents[1], text:'Check whether this evidence supports your main claim directly, and whether you explain the connection.'});
+  var c = sents.filter(function(s){ return /however|some people|others|although|critics/i.test(s); })[0];
+  if (c) out.push({type:'counterargument', anchor:c, text:'You mention another view here. Does the paragraph respond to it?'});
+  if (sents[2] && out.length<3) out.push({type:'cohesion', anchor:sents[2], text:'The connection between this sentence and your main claim is not stated yet.'});
+  return out.length ? out : [{type:'organization', anchor:sents[0]||'', text:'Make sure your claim is clear and each sentence supports it.'}];
+}
+
+/* ================= interaction ================= */
+function itemById(id){ return S.items.filter(function(i){ return i.id===id; })[0]; }
+function sendTurn(id, text, help){
+  var item = itemById(id); if (!item || S.busy) return;
+  text = (text||'').trim();
+  var helpText = {instrumental:'Can you give me a hint so I understand?', executive:'Just tell me the answer.', example:'Can I see an example?', done:'I\'ve got it, thanks.'}[help];
+  var shown = text || helpText; if (!shown) return;
+  var turn = {who:'student', text:shown, help:help||null};
+  item.thread.push(turn);
+  if (help){ S.helpLog.push({kind: help==='done'?'done':(help==='executive'?'executive':'instrumental'), item:id, source:item.source}); }
+  S.busy = true; renderStudent();
+  var coding = help ? Promise.resolve({code:null, by:'help'}) : codeTurn(item, shown);
+  coding.then(function(coded){
+    turn.code = coded.code; turn.evidence = coded.evidence; turn.accurate = coded.accurate; turn.confidence = coded.confidence; turn.by = coded.by; turn.rationale = coded.rationale;
+    if (item.source === 'peer' || S.paused){ S.busy=false; save(); renderStudent(); return; }
+    var d = policy(item, coded, help);
+    return phrase(item, d).then(function(p){
+      item.thread.push({who:'ai', text:p.text, level:d.level, move:d.move, why:d.why, by:p.by});
+      S.aiTexts.push(p.text); S.busy=false; save(); renderStudent();
+    });
+  });
+}
+function addPeer(){
+  var txt = (S.peerDraft||'').trim(); if (!txt) return;
+  var sents = sentences(S.draft); var a = $('#peer-anchor'); var idx = a ? +a.value : 0;
+  S.items.push(makeItem('peer', {type:'organization', anchor:sents[idx]||sents[0]||'', text:txt}));
+  S.peerDraft=''; save(); renderStudent();
+}
+
+/* ================= alignment & analysis ================= */
+function alignDrafts(a, b){
+  var A = sentences(a), B = sentences(b), usedB = {}, pairs = [];
+  A.forEach(function(s, i){
+    var best=-1, bs=0; B.forEach(function(t,j){ if(usedB[j]) return; var x=jac(s,t); if(x>bs){bs=x;best=j;} });
+    if (best>-1 && bs>=0.3){ usedB[best]=1; pairs.push({a:i, b:best, sim:bs, kind: bs>=0.95?'same':'modified'}); }
+    else pairs.push({a:i, b:-1, sim:0, kind:'deleted'});
+  });
+  B.forEach(function(t,j){ if(!usedB[j]) pairs.push({a:-1, b:j, sim:0, kind:'added'}); });
+  return {A:A, B:B, pairs:pairs};
+}
+function wordDiff(a, b){
+  var x = a.split(/\s+/), y = b.split(/\s+/), n=x.length, m=y.length, L=[];
+  for (var i=0;i<=n;i++){ L.push(new Array(m+1).fill(0)); }
+  for (i=n-1;i>=0;i--) for (var j=m-1;j>=0;j--) L[i][j] = x[i].toLowerCase()===y[j].toLowerCase() ? L[i+1][j+1]+1 : Math.max(L[i+1][j], L[i][j+1]);
+  var out=[]; i=0; j=0;
+  while(i<n && j<m){ if (x[i].toLowerCase()===y[j].toLowerCase()){ out.push(esc(y[j])); i++; j++; } else if (L[i+1][j]>=L[i][j+1]){ out.push('<del>'+esc(x[i])+'</del>'); i++; } else { out.push('<ins>'+esc(y[j])+'</ins>'); j++; } }
+  while(i<n){ out.push('<del>'+esc(x[i++])+'</del>'); } while(j<m){ out.push('<ins>'+esc(y[j++])+'</ins>'); }
+  return out.join(' ');
+}
+function appropriation(sentence, original){
+  var g = grams(sentence,3); if (!g.length) return {kind:'own', share:0};
+  var ai = new Set(); S.aiTexts.forEach(function(t){ grams(t,3).forEach(function(x){ ai.add(x); }); });
+  var orig = new Set(grams(original||'',3));
+  var fresh = g.filter(function(x){ return !orig.has(x); }); if (!fresh.length) return {kind:'own', share:0};
+  var hit = fresh.filter(function(x){ return ai.has(x); }).length / fresh.length;
+  return {kind: hit>=0.6?'verbatim':(hit>=0.25?'adapted':'own'), share:hit};
+}
+function analyse(){
+  var al = alignDrafts(S.draft, S.revision);
+  var changed = al.pairs.filter(function(p){ return p.kind!=='same'; });
+  var newTok = 0, aiTok = 0;
+  changed.forEach(function(p){ if (p.b<0) return; var s = al.B[p.b], ap = appropriation(s, p.a>-1?al.A[p.a]:''); p.app = ap; var w = words(s); newTok += w; aiTok += w*ap.share; });
+  var own = newTok ? Math.round(100*(1 - aiTok/newTok)) : 100;
+  S.items.forEach(function(it){
+    var ai = anchorIndex(it.anchor, al.A); var p = al.pairs.filter(function(q){ return q.a===ai; })[0];
+    var near = al.pairs.filter(function(q){ return q.kind==='added' && p && p.b>-1 && Math.abs(q.b - p.b)<=1; }).length;
+    var touched = p && (p.kind!=='same' || near>0);
+    it.align = { status: touched ? 'revised' : 'not revised', improved: 'unclear', app: p && p.app ? p.app.kind : (near?'own':null), note:'', by:'rules' };
+  });
+  S.analysis = { pairs:al.pairs, A:al.A, B:al.B, own:own, by:'rules', selfInitiated:[] };
+  S.step = 4; S.busy = !!sample; save(); renderStudent();
+  if (!sample) return;
+  var list = S.items.map(function(it, k){ return (k+1) + '. [' + it.source + ', ' + it.type + '] on "' + it.anchor + '": ' + it.text; }).join('\n');
+  var prompt = 'Compare an English learner\'s draft and revision against the feedback they received.\nDraft: """' + S.draft + '"""\nRevision: """' + S.revision + '"""\nFeedback:\n' + list + '\n'
+    + 'For each feedback item decide: status = "addressed" | "partially addressed" | "not addressed"; improved = "yes" | "no" | "unclear" (does the revision improve the targeted dimension, judged by comparing before and after); note = max 18 words.\n'
+    + 'Also list revisions that respond to no feedback item (self-initiated), max 3, each max 12 words.\n'
+    + 'Return JSON only: {"items":[{"n":1,"status":"...","improved":"...","note":"..."}],"selfInitiated":["..."]}';
+  llm(prompt,'default').then(function(r){
+    (r && r.items || []).forEach(function(x){ var it = S.items[(x.n||0)-1]; if (!it) return; it.align.status = x.status || it.align.status; it.align.improved = x.improved || 'unclear'; it.align.note = x.note || ''; it.align.by = 'llm'; });
+    S.analysis.selfInitiated = (r && r.selfInitiated) || []; S.analysis.by = 'llm';
+  }).catch(function(){}).then(function(){ S.busy=false; save(); renderStudent(); });
+}
+function lastStudentCode(it){ var t = it.thread.filter(function(x){ return x.who==='student' && x.code; }); return t.length ? t[t.length-1].code : null; }
+function quadrant(it){
+  var talk = lastStudentCode(it);
+  var explains = talk==='REASON' || talk==='EVAL' || talk==='TRANSFER';
+  var works = it.align && /^addressed/.test(it.align.status) && it.align.improved==='yes';
+  var revised = it.align && (it.align.status==='revised' || /addressed/.test(it.align.status)) && !/^not/.test(it.align.status);
+  if (it.decision && it.decision.kind==='reject' && talk==='EVAL') return {label:'Reasoned rejection', tone:'eval'};
+  if (!talk) return {label: revised ? 'Silent revision' : 'Not engaged yet', tone:'other'};
+  if (!it.align) return {label:'Awaiting revision', tone:'other'};
+  if (it.align.improved==='unclear' && it.align.by==='rules') return {label: explains ? 'Explained · check revision' : 'Brief · check revision', tone:'other'};
+  if (explains) return works ? {label:'Strong evidence', tone:'good'} : {label:'Possible misconception', tone:'warn'};
+  return works ? {label:'Quiet competence', tone:'good'} : {label:'Surface uptake', tone:'warn'};
+}
+
+/* ================= metrics ================= */
+function metrics(st){
+  var items = st.items || [], codes = {ai:{}, peer:{}};
+  items.forEach(function(it){ it.thread.forEach(function(t){ if (t.who==='student' && t.code){ var c = (st.overrides && st.overrides[it.id+':'+it.thread.indexOf(t)]) || t.code; codes[it.source][c] = (codes[it.source][c]||0)+1; } }); });
+  var help = {instrumental:0, executive:0};
+  (st.helpLog||[]).forEach(function(h){ var k = h.kind==='example' ? 'instrumental' : h.kind; if (help[k]!=null) help[k]++; });
+  var decided = items.filter(function(i){ return i.decision; });
+  var withReason = decided.filter(function(i){ return i.decision.reason && i.decision.reason.trim().length>3; });
+  return { codes:codes, help:help, decided:decided.length, total:items.length, withReason:withReason.length,
+    own: st.analysis ? st.analysis.own : null, trail:(st.levelTrail||[]).map(function(x){ return x.level; }),
+    accepts: decided.filter(function(i){ return i.decision.kind==='accept'; }).length };
+}
+
+/* ================= render: student ================= */
+function codeChip(c){ var k = CODES[c] || CODES.OTHER; return '<span class="code" style="--cc:' + k.color + '" title="' + esc(k.name + ' · ICAP: ' + k.icap) + '">' + esc(c) + '</span>'; }
+function stepper(){
+  var names = ['Draft','Feedback dialogue','Revise','Analyse','Reflect & submit'];
+  return '<nav class="stepper" aria-label="Progress">' + names.map(function(n,i){ var k=i+1, cls = k<S.step?'done':(k===S.step?'cur':''); return '<span class="step ' + cls + '"><b>' + k + '</b>' + n + '</span>'; }).join('') + '</nav>';
+}
+function draftPanel(){
+  var sents = sentences(S.step>=3 ? S.revision : S.draft);
+  var openItem = itemById(S.open);
+  if (S.step === 1){
+    return '<div class="panel"><div class="ph"><h2>Your draft</h2><span class="wc">' + words(S.draft) + ' words</span></div>'
+      + '<div class="task"><span class="eyebrow">Task</span><br>' + esc(S.task) + '</div>'
+      + '<label class="small muted" for="draft">Write or paste your paragraph. A sample draft is loaded so you can try the flow.</label>'
+      + '<textarea id="draft" data-bind="draft">' + esc(S.draft) + '</textarea>'
+      + '<div class="row"><button class="btn" data-act="start" ' + (words(S.draft)<15?'disabled':'') + '>Get peer &amp; AI feedback →</button><button class="btn ghost" data-act="sample">Load sample draft</button></div></div>';
+  }
+  if (S.step === 2){
+    return '<div class="panel"><div class="ph"><h2>Your draft</h2><span class="small muted">Locked while you discuss feedback</span></div>'
+      + '<div class="sentences">' + sentences(S.draft).map(function(s){ var hl = openItem && jac(s, openItem.anchor)>0.6 ? ' hl-' + openItem.source : ''; return '<div class="sent' + hl + '">' + esc(s) + '</div>'; }).join('') + '</div>'
+      + '<div class="row"><button class="btn" data-act="to-revise">Start revising →</button><span class="small muted">You can revise any time. Decisions on each comment are up to you.</span></div></div>';
+  }
+  return '<div class="panel"><div class="ph"><h2>' + (S.step===3?'Revise':'Your revision') + '</h2><span class="wc">' + words(S.revision) + ' words</span></div>'
+    + (S.step===3 ? '<p class="small muted">Edit in your own words. The ownership meter on the right updates as you type.</p><textarea id="revision" data-bind="revision">' + esc(S.revision) + '</textarea><div class="row"><button class="btn" data-act="analyse">Analyse my revision →</button><button class="btn ghost" data-act="back-dialogue">Back to feedback</button></div>'
+      : '<div class="sentences">' + sents.map(function(s){ return '<div class="sent">' + esc(s) + '</div>'; }).join('') + '</div>' + (S.step===4?'<div class="row"><button class="btn ghost" data-act="back-revise">Edit revision</button></div>':''))
+    + '</div>';
+}
+function itemCard(it){
+  var open = S.open === it.id;
+  var dec = it.decision ? '<span class="badge ' + {accept:'acc',reject:'rej',adapt:'adp'}[it.decision.kind] + '">' + it.decision.kind + '</span>' : '<span class="badge">undecided</span>';
+  var h = '<div class="item' + (open?' open':'') + '">'
+    + '<button class="ihead" data-act="toggle" data-id="' + it.id + '" aria-expanded="' + open + '"><span class="src ' + it.source + '">' + (it.source==='ai'?'AI coach':'Peer') + '</span><span><span class="t">' + esc(it.text) + '</span><div class="meta">' + esc(TYPES[it.type]||it.type) + ' · on “' + esc(it.anchor.slice(0,60)) + (it.anchor.length>60?'…':'') + '”</div></span>' + dec + '</button>';
+  if (!open) return h + '</div>';
+  h += '<div class="ibody"><div class="thread">';
+  it.thread.slice(1).forEach(function(t, k){
+    var idx = k+1;
+    if (t.who==='student'){
+      h += '<div class="turn student"><span class="who">You' + (t.help?' · ' + (t.help==='executive'?'asked for the answer':(t.help==='done'?'took control':'asked for help')):'') + '</span><div class="bubble">' + esc(t.text) + '</div>';
+      if (t.help) h += '<div class="coded"><span class="chip ' + (t.help==='executive'?'warn':'own') + '">' + {executive:'help-seeking · executive',instrumental:'help-seeking · instrumental',example:'help-seeking · instrumental',done:'student takes control'}[t.help] + '</span></div>';
+      else if (t.code) h += '<div class="coded">' + codeChip(t.code) + (t.evidence && t.evidence!==t.text ? '<span class="ev">“' + esc(t.evidence) + '”</span>' : '') + (t.accurate===false?'<span class="chip warn">reasoning off-target</span>':(t.accurate===true?'<span class="chip own">reasoning on-target</span>':'')) + '<span class="small muted">' + (t.by==='llm'?'LLM-coded':'rule-coded') + '</span></div>';
+      else h += '<div class="coded"><span class="typing"><i></i><i></i><i></i></span></div>';
+      h += '</div>';
+    } else {
+      h += '<div class="turn ' + t.who + '"><span class="who">' + (t.who==='ai'?'AI coach':'Peer') + '</span><div class="bubble">' + esc(t.text) + '</div>'
+        + (t.why ? '<div class="why"><span class="lv">' + esc(LEVELS[t.level]) + '</span><span>' + esc(t.why) + '</span></div>' : '') + '</div>';
+    }
+  });
+  if (S.busy) h += '<div class="turn ai"><span class="who">AI coach</span><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>';
+  h += '</div>';
+  if (S.step <= 3){
+    h += '<div class="compose"><label class="small muted" for="reply-' + it.id + '">' + (it.source==='peer' ? 'Reply to your classmate (coded the same way as AI dialogue)' : 'Reply in your own words: agree, question, or push back') + '</label>'
+      + '<textarea id="reply-' + it.id + '" data-reply="' + it.id + '" placeholder="e.g., The survey is about teachers, so…"></textarea>'
+      + '<div class="row"><button class="btn" data-act="send" data-id="' + it.id + '" ' + (S.busy?'disabled':'') + '>Send</button>'
+      + (it.source==='ai' && !S.paused ? '<div class="helps"><button class="help" data-act="help" data-kind="instrumental" data-id="' + it.id + '">Give me a hint <small>· understand</small></button><button class="help" data-act="help" data-kind="example" data-id="' + it.id + '">Show an example</button><button class="help" data-act="help" data-kind="executive" data-id="' + it.id + '">Just tell me the answer</button><button class="help" data-act="help" data-kind="done" data-id="' + it.id + '">I\'ve got it</button></div>' : '')
+      + '</div></div>';
+    h += '<div class="decide"><span class="mini-title">Your decision on this comment</span><div class="opts">'
+      + ['accept','adapt','reject'].map(function(k){ return '<button class="opt" data-act="decide" data-kind="' + k + '" data-id="' + it.id + '" aria-pressed="' + (it.decision&&it.decision.kind===k) + '">' + {accept:'Accept',adapt:'Adapt my way',reject:'Reject'}[k] + '</button>'; }).join('')
+      + '</div>' + (it.decision ? '<input type="text" data-reason="' + it.id + '" placeholder="Why? (required for reject, helpful for all)" value="' + esc(it.decision.reason||'') + '">' : '') + '</div>';
+  }
+  return h + '</div></div>';
+}
+function feedbackPanel(){
+  if (S.step === 1) return '<div class="panel tint"><div class="ph"><h2>Feedback dialogue</h2></div><p class="muted small">After you submit your draft, you get feedback from a classmate and from an AI coach. You respond to each comment, ask for the kind of help you want, and decide what to do. Every reply is coded for engagement, and the AI\'s next move is chosen by an explicit policy you can inspect.</p>'
+    + '<div class="principles"><span class="mini-title">How the coach works</span><ul><li>Asks before it tells: no rewriting unless you ask repeatedly.</li><li>You choose: accept, adapt or reject every comment.</li><li>Support fades as you explain your revisions accurately.</li><li>Every decision is shown with the reason behind it.</li></ul></div></div>';
+  if (S.busy && !S.items.length) return '<div class="panel tint"><div class="ph"><h2>Feedback dialogue</h2></div><p class="muted"><span class="typing"><i></i><i></i><i></i></span> Reading your draft…</p></div>';
+  var lane = S.lane, shown = S.items.filter(function(i){ return lane==='all' || i.source===lane; });
+  var sents = sentences(S.draft);
+  var h = '<div class="panel tint"><div class="ph"><h2>Feedback dialogue</h2><div class="lanes">'
+    + ['all','peer','ai'].map(function(l){ return '<button class="lanebtn" data-act="lane" data-lane="' + l + '" aria-pressed="' + (lane===l) + '">' + {all:'All',peer:'Peer',ai:'AI coach'}[l] + ' (' + S.items.filter(function(i){ return l==='all'||i.source===l; }).length + ')</button>'; }).join('') + '</div></div>';
+  h += shown.map(itemCard).join('');
+  if (S.step <= 3) h += '<details><summary class="small muted" style="cursor:pointer">Add a comment from a classmate</summary><div class="compose" style="margin-top:8px"><select id="peer-anchor" aria-label="Sentence the comment is about">' + sents.map(function(s,i){ return '<option value="' + i + '">' + esc(s.slice(0,70)) + '</option>'; }).join('') + '</select><textarea data-bind="peerDraft" placeholder="Paste your classmate\'s comment">' + esc(S.peerDraft||'') + '</textarea><button class="btn line" data-act="add-peer">Add peer comment</button></div></details>';
+  return h + '</div>';
+}
+function sparkline(trail, w, h){
+  w = w||260; h = h||70; if (!trail.length) return '<p class="small muted">Support level appears here as the dialogue goes on.</p>';
+  var n = trail.length, x = function(i){ return 22 + (n===1?0:i*(w-30)/(n-1)); }, y = function(l){ return 8 + (5-l)*(h-18)/5; };
+  var pts = trail.map(function(l,i){ return x(i)+','+y(l); }).join(' ');
+  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Support level over turns: ' + trail.join(', ') + '"><text x="0" y="' + (y(5)+3) + '" font-size="9" fill="var(--muted)">L5</text><text x="0" y="' + (y(0)+3) + '" font-size="9" fill="var(--muted)">L0</text><line x1="20" x2="' + w + '" y1="' + y(0) + '" y2="' + y(0) + '" stroke="var(--line)"/><polyline points="' + pts + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + x(n-1) + '" cy="' + y(trail[n-1]) + '" r="4" fill="var(--accent)"/></svg>';
+}
+function codeStack(counts){
+  var keys = Object.keys(CODES), tot = keys.reduce(function(a,k){ return a+(counts[k]||0); },0);
+  if (!tot) return '<div class="stack"></div>';
+  return '<div class="stack">' + keys.map(function(k){ var v = counts[k]||0; return v ? '<i style="width:' + (100*v/tot) + '%; background:' + CODES[k].color + '" title="' + k + ': ' + v + '"></i>' : ''; }).join('') + '</div>';
+}
+function ownershipLive(){
+  if (S.step < 3) return null;
+  var al = alignDrafts(S.draft, S.revision), nt=0, at=0;
+  al.pairs.forEach(function(p){ if (p.kind==='same' || p.b<0) return; var s = al.B[p.b], ap = appropriation(s, p.a>-1?al.A[p.a]:''); var w = words(s); nt+=w; at+=w*ap.share; });
+  return nt ? Math.round(100*(1-at/nt)) : 100;
+}
+function agencyPanel(){
+  var M = metrics(S), own = S.analysis && S.step>=4 ? S.analysis.own : ownershipLive();
+  var h = '<aside class="panel agency" aria-label="Agency panel"><div class="ph"><h2>Your agency</h2><span class="small muted">Who is doing the thinking</span></div>';
+  h += '<div class="meter"><div class="kv"><span>Your own words in changes</span><b id="own-val">' + (own==null?'—':own+'%') + '</b></div><div class="bar"><i id="own-bar" style="width:' + (own==null?0:own) + '%"></i></div><span class="small muted">Share of new or changed text not copied from AI messages.</span></div>';
+  h += '<div class="kv"><span>Decisions made</span><b>' + M.decided + ' / ' + M.total + '</b></div>';
+  h += '<div class="kv"><span>…with a reason</span><b>' + M.withReason + '</b></div>';
+  h += '<div class="kv"><span>Help asked to understand</span><b>' + M.help.instrumental + '</b></div>';
+  h += '<div class="kv"><span>Help asked for the answer</span><b>' + M.help.executive + '</b></div>';
+  h += '<div><span class="mini-title">AI support level over time</span>' + sparkline(M.trail) + '</div>';
+  h += '<div class="codebars"><span class="mini-title">Your engagement: peer vs AI</span><div class="cbrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="cbrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div><div class="legend">' + Object.keys(CODES).map(function(k){ return '<span style="--lc:' + CODES[k].color + '">' + k + '</span>'; }).join('') + '</div></div>';
+  h += '<div class="ctl"><span class="mini-title">Control the coach</span><div class="seg" role="group" aria-label="Coach style">' + ['questions','hints','explain'].map(function(k){ return '<button data-act="style" data-style="' + k + '" aria-pressed="' + (S.style===k) + '">' + {questions:'Ask me questions',hints:'Give hints',explain:'Explain'}[k] + '</button>'; }).join('') + '</div><label class="switch" for="pause"><span>Pause the AI coach</span><input type="checkbox" id="pause" ' + (S.paused?'checked':'') + '></label><span class="small muted">Style changes wording only. The policy still decides how much help to give.</span></div>';
+  h += '<button class="btn ghost" data-act="reset" style="justify-self:start">Start over</button>';
+  return h + '</aside>';
+}
+function analysisPanel(){
+  var A = S.analysis; if (!A) return '';
+  var h = '<div class="panel"><div class="ph"><h2>Feedback → revision</h2><span class="small muted">' + (S.busy?'<span class="typing"><i></i><i></i><i></i></span> LLM judging improvement…':(A.by==='llm'?'Alignment + LLM rubric judgement':'Rule-based alignment (offline)')) + '</span></div>';
+  h += '<div class="diff">' + A.pairs.map(function(p){
+    if (p.kind==='same') return '';
+    var body = p.kind==='modified' ? wordDiff(A.A[p.a], A.B[p.b]) : (p.kind==='added' ? '<ins>' + esc(A.B[p.b]) + '</ins>' : '<del>' + esc(A.A[p.a]) + '</del>');
+    var chips = p.app ? '<span class="chip ' + (p.app.kind==='own'?'own':'ai') + '">' + {own:'own words',adapted:'adapted from AI',verbatim:'verbatim from AI'}[p.app.kind] + '</span>' : '';
+    return '<div class="drow"><span class="k">' + p.kind + '</span><div>' + body + '<div class="chips">' + chips + '</div></div></div>';
+  }).join('') + '</div>';
+  if (!A.pairs.some(function(p){ return p.kind!=='same'; })) h += '<p class="notice">No changes yet. Go back and revise, or keep your draft and explain why in the reflection.</p>';
+  h += '<span class="mini-title">Feedback journeys</span><div class="journey">' + S.items.map(journeyCard).join('') + '</div>';
+  if (A.selfInitiated && A.selfInitiated.length) h += '<div><span class="mini-title">Self-initiated changes</span><ul class="small">' + A.selfInitiated.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') + '</ul></div>';
+  h += '<div class="row"><button class="btn" data-act="to-reflect" ' + (S.busy?'disabled':'') + '>Reflect &amp; submit →</button></div>';
+  return h + '</div>';
+}
+function journeyCard(it){
+  var q = quadrant(it), talk = lastStudentCode(it), al = it.align || {};
+  var st = [['Given',true],['Discussed',!!talk],['Decided',!!it.decision],['Revised',/addressed|revised/.test(al.status||'') && !/^not/.test(al.status||'')],['Improved',al.improved==='yes']];
+  return '<div class="jcard"><div class="row" style="justify-content:space-between"><span><span class="src ' + it.source + '">' + (it.source==='ai'?'AI':'Peer') + '</span> <b class="small">' + esc(TYPES[it.type]||it.type) + '</b></span><span class="quad" style="color:' + {good:'var(--ins)',warn:'var(--warn)',eval:'var(--c-eval)',other:'var(--muted)'}[q.tone] + '">' + esc(q.label) + '</span></div>'
+    + '<div class="jsteps">' + st.map(function(s,i){ return (i?'<em>→</em>':'') + '<span class="' + (s[1]?'on':'') + '">' + s[0] + '</span>'; }).join('') + '</div>'
+    + '<div class="small muted">' + (talk ? 'Talk: ' + codeChip(talk) + ' ' : '') + (it.decision ? ' · Decision: <b>' + it.decision.kind + '</b>' + (it.decision.reason?' “' + esc(it.decision.reason) + '”':'') : '') + (al.status ? ' · ' + esc(al.status) + (al.improved && al.improved!=='unclear' ? ', improved: ' + esc(al.improved) : '') : '') + (al.app && al.app!=='own' ? ' · <span class="chip ai">' + esc(al.app) + ' AI wording</span>' : '') + '</div>'
+    + (al.note ? '<div class="small">' + esc(al.note) + '</div>' : '') + '</div>';
+}
+function reflectPanel(){
+  var h = '<div class="panel"><div class="ph"><h2>Reflect &amp; submit</h2></div><div class="reflect">'
+    + '<label for="r1">What did you change, and why?</label><textarea id="r1" data-refl="changed">' + esc(S.reflection.changed) + '</textarea>'
+    + '<label for="r2">What did you decide not to change, and why?</label><textarea id="r2" data-refl="kept">' + esc(S.reflection.kept) + '</textarea>'
+    + '<label for="r3">How did the peer and the AI help you differently?</label><textarea id="r3" data-refl="ai">' + esc(S.reflection.ai) + '</textarea></div>';
+  if (S.submitted) h += '<p class="ok">Submitted ' + new Date(S.submitted).toLocaleString() + '. Your teacher can now see your feedback journeys.</p>';
+  else if (!db) h += '<p class="notice">Saving to the class needs you to be signed in with access to this page. Your work stays in this browser either way.</p>';
+  h += '<div class="row"><button class="btn" data-act="submit" ' + (!db?'disabled':'') + '>Submit to my teacher</button><button class="btn ghost" data-act="back-analyse">Back</button></div>';
+  return h + '</div>';
+}
+function renderStudent(){
+  var root = $('#student'); if (!root) return;
+  var focus = document.activeElement, fid = focus && (focus.id || (focus.dataset && focus.dataset.reply && 'reply-'+focus.dataset.reply)), sel = focus && focus.selectionStart;
+  var middle = S.step >= 4 ? (S.step===4 ? analysisPanel() : reflectPanel()) : feedbackPanel();
+  root.innerHTML = stepper() + '<div class="studio">' + draftPanel() + middle + agencyPanel() + '</div>';
+  if (fid){ var el = document.getElementById(fid); if (el){ el.focus(); try{ if (sel!=null) el.setSelectionRange(sel, sel); }catch(e){} } }
+}
+
+/* ================= events: student ================= */
+document.addEventListener('input', function(e){
+  var t = e.target;
+  if (t.dataset.bind){ S[t.dataset.bind] = t.value; save();
+    if (t.dataset.bind==='draft'){ var b = $('[data-act="start"]'); if (b) b.disabled = words(t.value)<15; var wc = t.closest('.panel').querySelector('.wc'); if (wc) wc.textContent = words(t.value) + ' words'; }
+    if (t.dataset.bind==='revision'){ var o = ownershipLive(); $('#own-val').textContent = o+'%'; $('#own-bar').style.width = o+'%'; var wc2 = t.closest('.panel').querySelector('.wc'); if (wc2) wc2.textContent = words(t.value) + ' words'; }
+  }
+  if (t.dataset.reason){ var it = itemById(t.dataset.reason); if (it && it.decision){ it.decision.reason = t.value; save(); } }
+  if (t.dataset.refl){ S.reflection[t.dataset.refl] = t.value; save(); }
+});
+document.addEventListener('change', function(e){ if (e.target.id==='pause'){ S.paused = e.target.checked; save(); renderStudent(); } });
+document.addEventListener('keydown', function(e){ if (e.target.dataset && e.target.dataset.reply && e.key==='Enter' && (e.metaKey||e.ctrlKey)){ e.preventDefault(); sendTurn(e.target.dataset.reply, e.target.value); } });
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]'); if (!b) return;
+  var a = b.dataset.act, id = b.dataset.id;
+  if (a==='tabview') return;
+  if (a==='start') startFeedback();
+  else if (a==='sample'){ S.draft = SAMPLE; save(); renderStudent(); }
+  else if (a==='toggle'){ S.open = S.open===id?null:id; save(); renderStudent(); }
+  else if (a==='lane'){ S.lane = b.dataset.lane; save(); renderStudent(); }
+  else if (a==='send'){ var ta = document.querySelector('[data-reply="' + id + '"]'); sendTurn(id, ta?ta.value:''); }
+  else if (a==='help') sendTurn(id, '', b.dataset.kind);
+  else if (a==='decide'){ var it = itemById(id); it.decision = {kind:b.dataset.kind, reason:(it.decision&&it.decision.reason)||'', at:Date.now()}; save(); renderStudent(); var inp = document.querySelector('[data-reason="' + id + '"]'); if (inp) inp.focus(); }
+  else if (a==='add-peer') addPeer();
+  else if (a==='to-revise'){ S.step = 3; if (!S.revision) S.revision = S.draft; save(); renderStudent(); }
+  else if (a==='back-dialogue'){ S.step = 2; save(); renderStudent(); }
+  else if (a==='analyse') analyse();
+  else if (a==='back-revise'){ S.step = 3; save(); renderStudent(); }
+  else if (a==='to-reflect'){ S.step = 5; save(); renderStudent(); }
+  else if (a==='back-analyse'){ S.step = 4; save(); renderStudent(); }
+  else if (a==='style'){ S.style = b.dataset.style; save(); renderStudent(); }
+  else if (a==='reset'){ if (b.dataset.confirm==='1'){ S = fresh(); save(); renderStudent(); } else { b.dataset.confirm='1'; b.textContent='Click again to clear everything'; setTimeout(function(){ if (b.isConnected){ b.dataset.confirm=''; b.textContent='Start over'; } }, 3000); } }
+  else if (a==='submit') submit();
+  else if (a==='pick-student'){ T.sel = id; renderTeacher(); }
+  else if (a==='src'){ T.src = b.dataset.src; T.sel = null; renderTeacher(); }
+});
+
+/* ================= persistence ================= */
+function packSession(){
+  return { id: S.sessionId || (S.sessionId = uid()), savedAt: Date.now(), task:S.task, draft:S.draft, revision:S.revision, style:S.style,
+    items: S.items.map(function(it){ return {id:it.id, source:it.source, type:it.type, anchor:it.anchor, text:it.text, thread:it.thread, decision:it.decision, align:it.align}; }),
+    helpLog:S.helpLog, levelTrail:S.levelTrail, analysis: S.analysis ? {own:S.analysis.own, by:S.analysis.by, selfInitiated:S.analysis.selfInitiated} : null, reflection:S.reflection };
+}
+function submit(){
+  if (!db || !me.id){ alertInline('Sign in to submit.'); return; }
+  var ref = db.doc('sessions/' + me.id), pack = packSession();
+  ref.get().then(function(snap){
+    var prev = snap.exists ? (snap.data().sessions || []) : [];
+    prev = prev.filter(function(x){ return x.id !== pack.id; }); prev.push(pack); prev = prev.slice(-5);
+    return ref.set({ uid: me.id, updatedAt: Date.now(), sessions: prev, overrides: snap.exists ? (snap.data().overrides || {}) : {} });
+  }).then(function(){ S.submitted = Date.now(); save(); renderStudent(); })
+    .catch(function(err){ alertInline('Could not submit: ' + (err && err.message ? err.message : 'no write access') + '. Ask your teacher for Contributor access.'); });
+}
+function alertInline(msg){ var p = document.createElement('p'); p.className='notice'; p.textContent = msg; var panel = document.querySelector('#student .reflect') || document.querySelector('#student .panel'); if (panel) panel.after(p); setTimeout(function(){ p.remove(); }, 6000); }
+
+/* ================= teacher ================= */
+var T = { src:'demo', sel:null, live:[], liveErr:null };
+function subscribeSessions(){
+  var timer = setTimeout(function(){ T.liveErr = T.liveErr || 'timeout'; renderTeacher(); }, 10000);
+  try {
+    db.collection('sessions').onSnapshot(function(snap){
+      clearTimeout(timer); T.liveErr = null;
+      T.live = snap.docs.map(function(d){ var v = d.data() || {}; var ss = v.sessions || []; var last = ss[ss.length-1]; if (!last) return null; last.overrides = v.overrides || {}; last._doc = d.id; last._name = 'Student ' + d.id.slice(-4); return last; }).filter(Boolean);
+      renderTeacher();
+    }, function(err){ clearTimeout(timer); T.liveErr = err && err.code || 'error'; renderTeacher(); });
+  } catch(e){ clearTimeout(timer); T.liveErr = 'error'; }
+}
+function demoClass(){
+  var names = ['Student A','Student B','Student C','Student D','Student E','Student F'];
+  var specs = [
+    {codes:['REASON','REASON','EVAL'], dec:['adapt','adapt','reject'], imp:['yes','yes','no'], st:['addressed','addressed','not addressed'], help:[1,0], own:88, trail:[2,2,1,0,0]},
+    {codes:['ACK','ACK','ACK'], dec:['accept','accept','accept'], imp:['no','unclear','no'], st:['partially addressed','addressed','not addressed'], help:[0,3], own:41, trail:[2,1,3,4,5]},
+    {codes:['DIFF','REASON','REASON'], dec:['adapt','accept','adapt'], imp:['yes','yes','unclear'], st:['addressed','addressed','partially addressed'], help:[2,0], own:79, trail:[2,3,2,1,1]},
+    {codes:['REASON','ACK','DIFF'], dec:['adapt','accept',null], imp:['no','yes','unclear'], st:['addressed','addressed','not addressed'], help:[1,1], own:72, trail:[2,4,1,2,3]},
+    {codes:['ACK','EVAL','REASON'], dec:['accept','reject','adapt'], imp:['yes','no','yes'], st:['addressed','not addressed','addressed'], help:[0,0], own:93, trail:[2,1,1,0]},
+    {codes:['DIFF','DIFF','ACK'], dec:['accept','adapt','accept'], imp:['no','unclear','no'], st:['addressed','partially addressed','addressed'], help:[3,1], own:64, trail:[2,3,4,4,3]}
+  ];
+  var srcs = ['ai','ai','peer'], types = ['claim-evidence','counterargument','organization'], quotes = {REASON:'because the survey is about teachers', ACK:'ok I will change it', EVAL:'I disagree, the next sentence already answers it', DIFF:'I don\'t get why it is unclear'};
+  return specs.map(function(sp, n){
+    var helpLog = []; for (var i=0;i<sp.help[0];i++) helpLog.push({kind:'instrumental'}); for (i=0;i<sp.help[1];i++) helpLog.push({kind:'executive'});
+    return { _name:names[n], _demo:true, id:'demo'+n, overrides:{}, helpLog:helpLog, levelTrail:sp.trail.map(function(l){ return {level:l}; }), analysis:{own:sp.own},
+      items: sp.codes.map(function(c,k){ return { id:'d'+n+k, source:srcs[k], type:types[k], anchor:'(example sentence)', text:'(example feedback)', thread:[{who:srcs[k], text:'(example feedback)'},{who:'student', text:quotes[c], code:c, evidence:quotes[c]}], decision: sp.dec[k] ? {kind:sp.dec[k], reason: sp.dec[k]==='reject'?'my next sentence already answers it':''} : null, align:{status:sp.st[k], improved:sp.imp[k], by:'llm'} }; }) };
+  });
+}
+function classRows(){ return T.src==='demo' ? demoClass() : T.live; }
+function flagsFor(st){
+  var M = metrics(st), f = [];
+  if (M.total && M.accepts === M.total && (M.codes.ai.ACK||0) + (M.codes.peer.ACK||0) >= 2) f.push({t:'Accepted every comment without explaining', s:'Ask them to explain one change in a short conference.'});
+  if (M.help.executive >= 2) f.push({t:'Asked for answers ' + M.help.executive + ' times', s:'Check whether the task is too hard, or model one revision together.'});
+  if (M.own != null && M.own < 60) f.push({t:'Only ' + M.own + '% own words in changes', s:'Talk about using AI suggestions as models, not text to paste.'});
+  var mis = (st.items||[]).filter(function(it){ return quadrant(it).label==='Possible misconception'; }).length;
+  if (mis) f.push({t:mis + ' possible misconception' + (mis>1?'s':''), s:'Revisit the concept behind that feedback type.'});
+  return f;
+}
+function renderTeacher(){
+  var root = $('#teacher'); if (!root) return;
+  var rows = classRows();
+  var h = '<div class="srcsel" style="padding-top:16px"><span class="mini-title">Data</span><button class="lanebtn" data-act="src" data-src="demo" aria-pressed="' + (T.src==='demo') + '">Demo class</button><button class="lanebtn" data-act="src" data-src="live" aria-pressed="' + (T.src==='live') + '">Submitted sessions (' + T.live.length + ')</button>' + (T.src==='demo' ? '<span class="demo-tag">Illustrative example data</span>' : '') + '</div>';
+  if (T.src==='live' && !rows.length){
+    var why = !db ? 'Sign in to see submitted sessions.' : (!me.canEdit ? 'Only the teacher (owner or editors of this page) can see the class. Students see only their own work.' : (T.liveErr==='timeout' ? 'Still loading… check your connection.' : 'No submissions yet. Share this page with students as Contributors; their sessions appear here when they submit.'));
+    root.innerHTML = h + '<div class="panel" style="margin-block:14px 40px"><p class="muted">' + esc(why) + '</p></div>'; return;
+  }
+  var all = rows.map(function(st){ return {st:st, M:metrics(st)}; });
+  var items = []; rows.forEach(function(st){ (st.items||[]).forEach(function(it){ items.push(it); }); });
+  var lostByType = {}, totByType = {};
+  items.forEach(function(it){ totByType[it.type] = (totByType[it.type]||0)+1; var q = quadrant(it).label; if (/Surface|misconception|Not engaged/.test(q) || (it.align && /^not/.test(it.align.status) && !(it.decision&&it.decision.kind==='reject'))) lostByType[it.type] = (lostByType[it.type]||0)+1; });
+  var codesAI = {}, codesPeer = {}, ins=0, exe=0, ownSum=0, ownN=0, reasoned=0, decided=0;
+  all.forEach(function(r){ Object.keys(r.M.codes.ai).forEach(function(k){ codesAI[k]=(codesAI[k]||0)+r.M.codes.ai[k]; }); Object.keys(r.M.codes.peer).forEach(function(k){ codesPeer[k]=(codesPeer[k]||0)+r.M.codes.peer[k]; }); ins+=r.M.help.instrumental; exe+=r.M.help.executive; if (r.M.own!=null){ ownSum+=r.M.own; ownN++; } reasoned += r.M.withReason; decided += r.M.decided; });
+  h += '<div class="tgrid"><div class="kpi"><span>Students</span><b>' + rows.length + '</b></div><div class="kpi"><span>Average own words in revisions</span><b>' + (ownN?Math.round(ownSum/ownN)+'%':'—') + '</b></div><div class="kpi"><span>Help to understand vs. for answers</span><b>' + ins + ' : ' + exe + '</b></div><div class="kpi"><span>Decisions with a reason</span><b>' + reasoned + ' / ' + decided + '</b></div></div>';
+  h += '<div class="tcols"><div class="panel"><div class="ph"><h2>Which feedback gets lost?</h2><span class="small muted">Not taken up, surface uptake, or misread</span></div>' + Object.keys(totByType).map(function(k){ var v = Math.round(100*(lostByType[k]||0)/totByType[k]); return '<div class="hbar"><span>' + esc(TYPES[k]||k) + '</span><span class="t"><i style="width:' + v + '%"></i></span><span class="v">' + v + '%</span></div>'; }).join('') + '<p class="small muted">Use the top row to plan a mini-lesson.</p></div>'
+    + '<div class="panel"><div class="ph"><h2>Engagement: peer vs AI</h2><span class="small muted">Coded student replies</span></div><div class="codebars"><div class="cbrow"><span>Peer</span>' + codeStack(codesPeer) + '</div><div class="cbrow"><span>AI</span>' + codeStack(codesAI) + '</div><div class="legend">' + Object.keys(CODES).map(function(k){ return '<span style="--lc:' + CODES[k].color + '">' + k + ' · ' + esc(CODES[k].name) + '</span>'; }).join('') + '</div></div></div></div>';
+  var flagged = all.map(function(r){ return {st:r.st, f:flagsFor(r.st)}; }).filter(function(x){ return x.f.length; });
+  h += '<div class="tcols3"><div class="panel"><div class="ph"><h2>Students</h2></div><div class="slist">' + all.map(function(r){ var f = flagsFor(r.st).length; return '<button class="sbtn" data-act="pick-student" data-id="' + esc(r.st.id) + '" aria-pressed="' + (T.sel===r.st.id) + '"><span>' + esc(r.st._name) + '<br><span class="small muted">' + (r.M.own!=null?r.M.own+'% own words · ':'') + r.M.decided + '/' + r.M.total + ' decided</span></span>' + (f?'<span class="badge rej">' + f + ' flag' + (f>1?'s':'') + '</span>':'<span class="badge acc">on track</span>') + '</button>'; }).join('') + '</div>'
+    + (flagged.length ? '<span class="mini-title">Needs attention</span>' + flagged.map(function(x){ return '<div class="flag"><div><b>' + esc(x.st._name) + '</b> · ' + esc(x.f[0].t) + '<div class="sug">Suggested: ' + esc(x.f[0].s) + '</div></div></div>'; }).join('') : '') + '</div>';
+  var cur = rows.filter(function(st){ return st.id===T.sel; })[0] || rows[0];
+  h += '<div class="panel">' + (cur ? studentDetail(cur) : '') + '</div></div>';
+  root.innerHTML = h;
+}
+function studentDetail(st){
+  var M = metrics(st);
+  var h = '<div class="ph"><h2>' + esc(st._name) + '</h2>' + (st._demo?'<span class="demo-tag">example</span>':'<span class="small muted">submitted ' + new Date(st.savedAt).toLocaleString() + '</span>') + '</div>';
+  h += '<div class="tcols" style="padding:0"><div><span class="mini-title">AI support level over time</span>' + sparkline(M.trail, 300, 80) + '<p class="small muted">Falling line = support fading as the student explains accurately.</p></div><div class="codebars"><span class="mini-title">Replies by source</span><div class="cbrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="cbrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div><div class="kv"><span>Help: understand / answer</span><b>' + M.help.instrumental + ' / ' + M.help.executive + '</b></div><div class="kv"><span>Own words</span><b>' + (M.own!=null?M.own+'%':'—') + '</b></div></div></div>';
+  h += '<span class="mini-title">Feedback journeys · every claim links to the student\'s words</span><div class="scroll"><table><thead><tr><th>Feedback</th><th>Student said</th><th>Code</th><th>Decision</th><th>Revision</th><th>Reading</th></tr></thead><tbody>';
+  (st.items||[]).forEach(function(it){
+    var turns = it.thread.map(function(t,i){ return {t:t,i:i}; }).filter(function(x){ return x.t.who==='student' && x.t.code; });
+    var last = turns[turns.length-1];
+    var key = last ? it.id + ':' + last.i : null, eff = last ? ((st.overrides||{})[key] || last.t.code) : null;
+    var q = quadrant(it);
+    h += '<tr><td><span class="src ' + it.source + '">' + (it.source==='ai'?'AI':'Peer') + '</span> ' + esc(TYPES[it.type]||it.type) + '</td><td>' + (last ? '“' + esc(last.t.evidence || last.t.text) + '”' : '<span class="muted">no reply</span>') + '</td><td>' + (last ? '<span class="override">' + codeChip(eff) + (canOverride(st) ? '<select aria-label="Override code" data-ovr="' + esc(key) + '" data-doc="' + esc(st._doc||'') + '">' + Object.keys(CODES).map(function(k){ return '<option' + (k===eff?' selected':'') + '>' + k + '</option>'; }).join('') + '</select>' : '') + '</span>' + (eff!==last.t.code?'<br><span class="small muted">teacher override</span>':'') : '—') + '</td><td>' + (it.decision ? esc(it.decision.kind) + (it.decision.reason?'<br><span class="small muted">“' + esc(it.decision.reason) + '”</span>':'') : '—') + '</td><td>' + (it.align ? esc(it.align.status) + (it.align.improved && it.align.improved!=='unclear' ? '<br><span class="small muted">improved: ' + esc(it.align.improved) + '</span>' : '') : '—') + '</td><td><b style="color:' + {good:'var(--ins)',warn:'var(--warn)',eval:'var(--c-eval)',other:'var(--muted)'}[q.tone] + '">' + esc(q.label) + '</b></td></tr>';
+  });
+  h += '</tbody></table></div>';
+  var f = flagsFor(st);
+  if (f.length) h += '<div><span class="mini-title">Suggested next steps</span>' + f.map(function(x){ return '<div class="flag" style="margin-top:6px"><div>' + esc(x.t) + '<div class="sug">' + esc(x.s) + '</div></div></div>'; }).join('') + '</div>';
+  if (st.reflection && (st.reflection.changed || st.reflection.kept || st.reflection.ai)) h += '<div><span class="mini-title">Reflection</span><p class="small"><b>Changed:</b> ' + esc(st.reflection.changed) + '</p><p class="small"><b>Kept:</b> ' + esc(st.reflection.kept) + '</p><p class="small"><b>Peer vs AI:</b> ' + esc(st.reflection.ai) + '</p></div>';
+  return h;
+}
+function canOverride(st){ return st._demo || (me.canEdit && db && st._doc); }
+document.addEventListener('change', function(e){
+  var s = e.target; if (!s.dataset || !s.dataset.ovr) return;
+  var rows = classRows(), st = rows.filter(function(r){ return r.id===T.sel; })[0] || rows[0]; if (!st) return;
+  st.overrides = st.overrides || {}; st.overrides[s.dataset.ovr] = s.value;
+  if (!st._demo && db && s.dataset.doc){ db.doc('sessions/' + s.dataset.doc).update({ overrides: st.overrides }).catch(function(){}); }
+  renderTeacher();
+});
+
+/* ================= tabs ================= */
+Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
+  t.addEventListener('click', function(){
+    var v = t.dataset.view;
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(x){ x.setAttribute('aria-selected', x===t ? 'true' : 'false'); });
+    $('#view-student').hidden = v!=='student'; $('#view-teacher').hidden = v!=='teacher';
+    if (v==='teacher') renderTeacher();
+  });
+});
+
+renderStudent(); renderTeacher();
+})();
+</script>
