@@ -122,7 +122,7 @@ textarea.doc-edit::placeholder{color:var(--faint)}
 .doc-foot{display:flex; justify-content:space-between; gap:12px; margin-top:30px; padding-top:14px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted); flex-wrap:wrap}
 mark.anc{background:transparent; color:inherit; border-bottom:2px solid var(--c); padding-bottom:1px; cursor:pointer; border-radius:3px; transition:background .2s, box-shadow .2s}
 mark.anc:hover{background:var(--cs)}
-mark.anc.on{background:var(--cs); box-shadow:0 0 0 3px var(--cs), 0 0 24px -4px var(--c)}
+mark.anc.on{background:var(--cs); -webkit-box-decoration-break:clone; box-decoration-break:clone; box-shadow:0 0 22px -8px var(--c)}
 .doc-text ins{background:var(--ins-bg); color:var(--ins); text-decoration:none; border-radius:4px; padding:0 3px}
 .doc-text del{background:var(--del-bg); color:var(--del); border-radius:4px; padding:0 3px; text-decoration-color:rgba(255,169,176,.7)}
 .aitag{font-family:var(--f); font-size:11px; font-weight:600; vertical-align:3px; margin-left:4px; padding:1px 7px; border-radius:999px; background:var(--ai-soft); color:var(--ai); border:1px solid rgba(169,155,255,.25)}
@@ -254,7 +254,7 @@ details.why code{font-family:var(--m); font-size:11px; color:var(--accent)}
 .result b{font-size:13.5px}
 .result p{font-size:13px; color:var(--ink-2)}
 .result.defended{background:var(--good-soft); color:var(--good); border-color:rgba(94,224,168,.25)} .result.partly{background:var(--accent-soft); color:var(--accent); border-color:rgba(110,231,197,.25)} .result.not_yet{background:var(--warn-soft); color:var(--warn); border-color:rgba(247,164,101,.25)}
-mark.tgt{background:rgba(247,164,101,.16); color:inherit; border-radius:4px; box-shadow:0 0 0 3px rgba(247,164,101,.16), 0 0 30px -6px rgba(247,164,101,.6)}
+mark.tgt{background:rgba(247,164,101,.18); color:inherit; border-radius:4px; padding:2px 0; -webkit-box-decoration-break:clone; box-decoration-break:clone; box-shadow:0 0 22px -8px rgba(247,164,101,.7)}
 
 /* ---------- drawer & popover ---------- */
 .scrim{position:fixed; inset:0; background:rgba(2,4,6,.55); backdrop-filter:blur(3px); z-index:40; opacity:0; pointer-events:none; transition:opacity .25s}
