@@ -280,6 +280,38 @@ td q{quotes:none; font-family:var(--serif); font-size:14px; color:var(--ink)}
 select.ovr{border:1px solid var(--line); border-radius:6px; font-size:11.5px; padding:2px 4px; background:var(--surface); margin-top:4px}
 .back{display:inline-flex; align-items:center; gap:6px; border:0; background:none; color:var(--muted); font-size:13px; padding:0}
 .back:hover{color:var(--ink)}
+/* ---------- decision check ---------- */
+.check{background:var(--surface); border:1px solid var(--line-2); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+.chk-head{padding:16px 16px 12px; display:grid; gap:6px; border-bottom:1px solid var(--line)}
+.chk-badge{justify-self:start; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:999px}
+.chk-head h3{font-size:15px; font-weight:650}
+.chk-head p{font-size:12.5px; color:var(--muted)}
+.chk-body{padding:14px 16px 16px; display:grid; gap:12px}
+.chk-target{background:var(--sunken); border-radius:10px; padding:10px 12px; font-family:var(--serif); font-size:15px; line-height:1.6; color:var(--ink)}
+.chk-target ins{background:var(--ins-bg); color:var(--ins); text-decoration:none; border-radius:3px; padding:0 2px}
+.chk-target del{background:var(--del-bg); color:var(--del); border-radius:3px; padding:0 2px}
+.chk-target .cm{display:block; font-family:var(--f); font-size:12.5px; color:var(--muted); margin-bottom:6px}
+.chk-q{font-size:14px; font-weight:600; color:var(--ink)}
+.chk-chal{display:grid; gap:4px}
+.chk-chal .by{font-size:11.5px; font-weight:600; color:var(--warn)}
+.chk-chal .bubble{background:var(--warn-soft); font-size:13.5px; padding:9px 12px; border-radius:10px}
+.answer{border:1px solid var(--line-2); border-radius:10px; background:var(--surface); transition:border-color .15s, box-shadow .15s}
+.answer:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.answer textarea{display:block; width:100%; border:0; outline:0; resize:none; background:none; font-size:13.5px; line-height:1.55; padding:10px 12px 4px; min-height:64px}
+.answer .partial{padding:0 12px; font-size:13px; color:var(--faint); font-style:italic; min-height:0}
+.answer .bar{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 6px 6px 8px}
+.mic{display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 10px; border-radius:8px; border:1px solid var(--line); background:var(--surface); font-size:12.5px; font-weight:600; color:var(--ink-2)}
+.mic:hover{background:var(--sunken)}
+.mic.on{background:var(--bad-soft); border-color:transparent; color:var(--bad)}
+.mic.on .rec{width:8px; height:8px; border-radius:50%; background:var(--bad); animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--bad) 50%, transparent)}100%{box-shadow:0 0 0 8px transparent}}
+.mode{font-size:11.5px; color:var(--muted)}
+.result{display:grid; gap:4px; padding:12px; border-radius:10px}
+.result b{font-size:13.5px}
+.result p{font-size:13px}
+.result.defended{background:var(--good-soft); color:var(--good)} .result.partly{background:var(--accent-soft); color:var(--accent)} .result.not_yet{background:var(--warn-soft); color:var(--warn)}
+.result p{color:var(--ink-2)}
+mark.tgt{background:var(--warn-soft); color:inherit; border-radius:3px; box-shadow:0 0 0 3px var(--warn-soft)}
 @media (prefers-reduced-motion: reduce){ *, *::before, *::after{animation:none!important; transition:none!important} }
 </style>
 
@@ -381,7 +413,7 @@ function heuristicCode(text){
   var m;
   if (/(also|same (problem|thing)|other paragraph|elsewhere|next time|in general)/.test(t) && /(should|will|could|need)/.test(t)) return {code:'TRANSFER', evidence:(t.match(/(also[^.?!]*|other paragraph[^.?!]*|next time[^.?!]*)/)||[text])[0]};
   if (m = t.match(/(i disagree|i don'?t think so|already|but i (think|meant)|not (really )?true)[^.?!]*/)) return {code:'EVAL', evidence:m[0]};
-  if (m = t.match(/(because|since|so that|which means|the problem is|it doesn'?t|this shows|that'?s why)[^.?!]*/)) return {code:'REASON', evidence:m[0]};
+  if (m = t.match(/(because|since|so that|, so |which means|the problem is|it doesn'?t|this shows|that'?s why|affects|matters because|in order to)[^.?!]*/)) return {code:'REASON', evidence:m[0]};
   if (m = t.match(/(i don'?t (understand|get|know)|why is|what do you mean|confus|not sure|unclear)[^.?!]*/)) return {code:'DIFF', evidence:m[0]};
   if (/\?$/.test(t)) return {code:'DIFF', evidence:text};
   if (m = t.match(/^(ok|okay|sure|got it|yes|yeah|fine|will do|i'?ll (change|fix)|thanks|thank you)[^.?!]*/)) return {code:'ACK', evidence:m[0]};
@@ -602,7 +634,7 @@ function metrics(st){
 function packSession(){
   return { id: S.sessionId || (S.sessionId = uid()), savedAt: Date.now(), task:S.task, draft:S.draft, revision:S.revision, style:S.style,
     items: S.items.map(function(it){ return {id:it.id, source:it.source, type:it.type, anchor:it.anchor, text:it.text, thread:it.thread, decision:it.decision, align:it.align}; }),
-    helpLog:S.helpLog, levelTrail:S.levelTrail, analysis: S.analysis ? {own:S.analysis.own, by:S.analysis.by, selfInitiated:S.analysis.selfInitiated} : null, reflection:S.reflection };
+    helpLog:S.helpLog, levelTrail:S.levelTrail, analysis: S.analysis ? {own:S.analysis.own, by:S.analysis.by, selfInitiated:S.analysis.selfInitiated} : null, reflection:S.reflection, check:S.check||null };
 }
 function submit(){
   if (!db || !me.id){ alertInline('Sign in to submit.'); return; }
@@ -677,7 +709,8 @@ var ICON = {
   chat:'<svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   hand:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3v10M8 7l4-4 4 4M5 21h14"/></svg>',
   pulse:'<svg class="i" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>',
-  info:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>'
+  info:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+  mic:'<svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>'
 };
 function toast(msg){ var t = document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); t.textContent = msg; document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3800); }
 function alertInline(msg){ toast(msg); }
@@ -717,7 +750,7 @@ function stageHead(){
     2:['Discuss the feedback', 'Reply to each comment, ask for the kind of help you want, and decide what to do with it.' + (n ? ' <b style="color:var(--ink)">' + d + ' of ' + n + ' decided.</b>' : ''), '<button class="btn primary" data-act="to-revise">Start revising ' + ICON.arrow + '</button>'],
     3:['Revise in your own words', 'Edit your paragraph. Your comments stay in the margin so you can keep discussing them.', '<button class="btn quiet" data-act="goto" data-step="2">Back</button><button class="btn primary" data-act="analyse">Review changes ' + ICON.arrow + '</button>'],
     4:['See how feedback shaped your revision', 'Every change is matched to the comment it answers, and checked for whose words it uses.', '<button class="btn quiet" data-act="goto" data-step="3">Edit revision</button><button class="btn primary" data-act="to-reflect" ' + (S.busy?'disabled':'') + '>Reflect &amp; submit ' + ICON.arrow + '</button>'],
-    5:['Reflect and submit', 'Three short questions, then send your work to your teacher.', '<button class="btn quiet" data-act="goto" data-step="4">Back</button><button class="btn primary" data-act="submit" ' + (!db||S.submitted?'disabled':'') + '>' + (S.submitted?'Submitted':'Submit to teacher') + '</button>']
+    5:['Explain, reflect and submit', 'Defend one decision we pick at random, answer three short questions, then send your work to your teacher.', '<button class="btn quiet" data-act="goto" data-step="4">Back</button><button class="btn primary" data-act="submit" ' + (!db||S.submitted||!checkDone()?'disabled':'') + ' title="' + (checkDone()?'':'Finish the decision check first') + '">' + (S.submitted?'Submitted':'Submit to teacher') + '</button>']
   }[S.step];
   return '<div class="stagehead"><div><h1>' + H[0] + '</h1><p>' + H[1] + '</p></div><div class="btns">' + H[2] + '</div></div>';
 }
@@ -730,7 +763,7 @@ function docView(){
   if (S.step === 2) return '<article class="doc">' + assignment() + '<div class="doc-text">' + anchoredText(S.draft) + '</div>' + foot('Underlined sentences have comments. Click one to open it.', '<span style="color:var(--peer)">━</span> classmate &nbsp; <span style="color:var(--ai)">━</span> AI coach') + '</article>';
   if (S.step === 3) return '<article class="doc"><label class="sr" for="revision">Your revision</label><textarea id="revision" class="doc-edit" data-bind="revision">' + esc(S.revision) + '</textarea>' + foot('<span id="wc">' + words(S.revision) + '</span> words', '<span id="ownlive">' + (ownershipLive()) + '%</span> of your changes in your own words') + '</article>';
   if (S.step === 4) return '<article class="doc"><div class="doc-title">Changes since your draft</div><div class="doc-text">' + diffText() + '</div>' + foot('<ins style="background:var(--ins-bg);color:var(--ins);text-decoration:none;padding:0 4px;border-radius:3px">added</ins> &nbsp; <del style="background:var(--del-bg);color:var(--del);padding:0 4px;border-radius:3px">removed</del>', S.analysis.by==='llm' ? 'Improvement judged against each comment' : 'Matched by text similarity') + '</article>';
-  return '<article class="doc"><div class="doc-title">Final paragraph</div><div class="doc-text">' + esc(S.revision) + '</div>' + foot(words(S.revision) + ' words', '') + '</article>';
+  return '<article class="doc"><div class="doc-title">Final paragraph</div><div class="doc-text">' + finalText() + '</div>' + foot(words(S.revision) + ' words', S.check && S.check.target ? '<span style="background:var(--warn-soft);padding:0 6px;border-radius:3px">highlighted</span> = the decision you are explaining' : '') + '</article>';
 }
 function anchoredText(text){
   var sents = sentences(text);
@@ -846,7 +879,7 @@ function journeyCard(it){
     + (al.note ? '<p class="jnote">' + esc(al.note) + '</p>' : '') + '</div>';
 }
 function reflectMargin(){
-  var h = '<aside class="margin"><div class="reflect">'
+  var h = '<aside class="margin">' + checkCard() + '<div class="reflect">'
     + '<label>What did you change, and why?<textarea data-refl="changed" id="r1">' + esc(S.reflection.changed) + '</textarea></label>'
     + '<label>What did you keep, and why?<textarea data-refl="kept" id="r2">' + esc(S.reflection.kept) + '</textarea></label>'
     + '<label>How did your classmate and the AI help differently?<textarea data-refl="ai" id="r3">' + esc(S.reflection.ai) + '</textarea></label></div>';
@@ -881,13 +914,14 @@ function renderDrawer(){
     + '<section class="dsec"><h3>Decisions</h3><div class="row2"><div class="stat"><b>' + M.decided + '<span style="font-size:14px;color:var(--muted);font-weight:500"> / ' + M.total + '</span></b><span>comments decided</span></div><div class="stat"><b>' + M.withReason + '</b><span>with a reason</span></div></div></section>'
     + '<section class="dsec"><h3>Help you asked for</h3><div class="row2"><div class="stat"><b>' + M.help.instrumental + '</b><span>to understand</span></div><div class="stat"><b>' + M.help.executive + '</b><span>for the answer</span></div></div></section>'
     + '<section class="dsec"><h3>Coach support over time</h3>' + sparkline(M.trail) + '<p class="muted" style="font-size:12.5px">A falling line means the coach is stepping back as you explain your thinking.</p></section>'
-    + '<section class="dsec"><h3>How you responded</h3><div class="bars"><div class="barrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="barrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div></div>' + legend() + '</section>'
+    + checkInsight() + '<section class="dsec"><h3>How you responded</h3><div class="bars"><div class="barrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="barrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div></div>' + legend() + '</section>'
     + '</div>';
 }
 
 /* ---------- student render ---------- */
 function renderStudent(){
   if (VIEW !== 'student'){ renderTop(); return; }
+  ensureCheck();
   var main = $('#main');
   var f = document.activeElement, fid = f && f.id, sel = f && f.selectionStart, scrollY = window.scrollY;
   main.innerHTML = '<div class="stage">' + stageHead() + '<div class="workspace">' + docView() + marginView() + '</div></div>';
@@ -950,11 +984,207 @@ function studentDetail(st){
       + '<td><span class="verdict ' + q.tone + '">' + esc(q.label) + '</span></td></tr>';
   });
   h += '</tbody></table></div></section>';
+  h += checkPanel(st);
   if (f.length) h += '<section class="panel"><h2>Suggested next steps</h2>' + f.map(function(x){ return '<div class="att"><span style="color:var(--warn)">' + ICON.info + '</span><p>' + esc(x.t) + '<span>' + esc(x.s) + '</span></p><span></span></div>'; }).join('') + '</section>';
   if (st.reflection && (st.reflection.changed || st.reflection.kept || st.reflection.ai)) h += '<section class="panel"><h2>Reflection</h2><p style="font-size:13.5px"><b>Changed.</b> ' + esc(st.reflection.changed) + '</p><p style="font-size:13.5px"><b>Kept.</b> ' + esc(st.reflection.kept) + '</p><p style="font-size:13.5px"><b>Peer vs AI.</b> ' + esc(st.reflection.ai) + '</p></section>';
   return h;
 }
 function canOverride(st){ return st._demo || (me.canEdit && db && st._doc); }
+
+/* ================= decision check (stress test) ================= */
+var VERDICT = { defended:'Well defended', partly:'Partly explained', not_yet:'Worth another look' };
+function checkDone(){ return !!(S.check && (S.check.none || S.check.stage===3)); }
+function weightedPick(c){ var tot = c.reduce(function(a,x){ return a+x.w; },0), r = Math.random()*tot; for (var i=0;i<c.length;i++){ r -= c[i].w; if (r<=0) return c[i]; } return c[c.length-1]; }
+function pickCheck(){
+  var A = S.analysis; if (!A) return null;
+  var c = [];
+  A.pairs.forEach(function(p){
+    if (p.kind!=='modified' && p.kind!=='added') return;
+    var before = p.a>-1 ? A.A[p.a] : '', after = A.B[p.b], app = p.app ? p.app.kind : 'own';
+    var it = before ? S.items.filter(function(x){ return jac(before, x.anchor) > 0.5; })[0] : null;
+    var w = {verbatim:3, adapted:2, own:1}[app] || 1;
+    if (it && it.decision && it.decision.kind==='accept' && !(it.decision.reason||'').trim()) w += 1;
+    c.push({ w:w, t:{ kind:'change', before:before, after:after, app:app, itemId: it ? it.id : null } });
+  });
+  S.items.forEach(function(it){
+    var acted = it.align && !/^not/.test(it.align.status);
+    var rejected = it.decision && it.decision.kind==='reject';
+    if (!rejected && acted) return;
+    var w = rejected ? (((it.decision.reason||'').trim()) ? 1 : 2) : 2;
+    var B = sentences(S.revision), k = anchorIndex(it.anchor, B);
+    c.push({ w:w, t:{ kind:'kept', itemId:it.id, sentence: k>-1 ? B[k] : it.anchor } });
+  });
+  return c.length ? weightedPick(c).t : null;
+}
+function ensureCheck(){
+  if (S.step !== 5) return;
+  if (S.check && (S.check.none || S.check.target)) return;
+  var t = pickCheck();
+  S.check = t ? { target:t, stage:1, a1:'', a2:'', m1:{}, m2:{}, challenge:'', verdict:null, note:'', code1:null, code2:null, by:null, picked:Date.now() } : { none:true };
+  save();
+}
+function checkItem(){ return S.check && S.check.target && S.check.target.itemId ? itemById(S.check.target.itemId) : null; }
+function checkQuestion(){
+  var t = S.check.target, it = checkItem();
+  if (t.kind === 'change') return it ? 'You changed this sentence in response to ' + (it.source==='ai'?'the AI coach':'your classmate') + '. What problem were you fixing, and how does the new version fix it?' : 'You changed this sentence. What problem were you fixing, and how does the new version fix it?';
+  if (it && it.decision && it.decision.kind==='reject') return 'You rejected this comment' + ((it.decision.reason||'').trim() ? ' because “' + it.decision.reason.trim() + '”' : '') + '. Why is your sentence fine as it is?';
+  return 'You did not change this sentence after the comment. Why is it fine as it is?';
+}
+function decisionText(){
+  var t = S.check.target, it = checkItem();
+  if (t.kind === 'change') return 'Changed "' + (t.before || '(new sentence)') + '" to "' + t.after + '"' + (it ? ' in response to a ' + it.source + ' comment: "' + it.text + '"' : '') + '.';
+  return 'Kept "' + t.sentence + '" despite a ' + (it?it.source:'') + ' comment: "' + (it?it.text:'') + '"' + (it && it.decision ? ' (decision: ' + it.decision.kind + (it.decision.reason ? ', reason: "' + it.decision.reason + '"' : '') + ')' : '') + '.';
+}
+function targetBox(){
+  var t = S.check.target, it = checkItem();
+  if (t.kind === 'change') return '<div class="chk-target">' + (it ? '<span class="cm">' + esc(srcName(it)) + ' · ' + esc(TYPES[it.type]||it.type) + '</span>' : '') + (t.before ? diffRuns(t.before, t.after) : '<ins>' + esc(t.after) + '</ins>') + '</div>';
+  return '<div class="chk-target"><span class="cm">' + (it ? esc(srcName(it)) + ' said: “' + esc(it.text) + '”' : '') + '</span>' + esc(t.sentence) + '</div>';
+}
+function finalText(){
+  var t = S.check && S.check.target; if (!t) return esc(S.revision);
+  var key = t.kind==='change' ? t.after : t.sentence;
+  return sentences(S.revision).map(function(s){ return jac(s, key) > 0.85 ? '<mark class="tgt">' + esc(s) + '</mark>' : esc(s); }).join(' ');
+}
+function modeLabel(m){ m = m || {}; return m.voice && m.typed ? 'spoken + typed' : (m.voice ? 'spoken' : 'typed'); }
+function answerBox(field){
+  var n = field==='a1'?1:2, val = S.check[field] || '', can = Voice.available();
+  return '<div class="answer"><label class="sr" for="check-' + field + '">Your answer</label><textarea id="check-' + field + '" data-check="' + field + '" rows="3" placeholder="' + (can ? 'Speak or type your answer…' : 'Type your answer…') + '">' + esc(val) + '</textarea><div class="partial" id="partial-' + field + '"></div>'
+    + '<div class="bar">' + (can ? '<button class="mic' + (Voice.live===field?' on':'') + '" data-act="mic" data-field="' + field + '" aria-pressed="' + (Voice.live===field) + '">' + (Voice.live===field ? '<span class="rec"></span>Stop' : ICON.mic + 'Speak') + '</button>' : '<span class="mode">Voice input is not available in this browser</span>')
+    + '<button class="btn primary sm" data-act="check-next" ' + (words(val)<3 || S.busy ? 'disabled' : '') + '>' + (n===1 ? 'Continue' : 'Finish check') + '</button></div></div>';
+}
+function checkCard(){
+  var C = S.check; if (!C) return '';
+  if (C.none) return '';
+  var h = '<section class="check" aria-label="Decision check"><div class="chk-head"><span class="chk-badge">Decision check</span><h3>Explain one decision</h3><p>Picked at random from your revision. Explain it in your own words, by speaking or typing.</p></div><div class="chk-body">' + targetBox() + '<p class="chk-q">' + esc(checkQuestion()) + '</p>';
+  if (C.stage === 1) h += answerBox('a1');
+  else {
+    h += '<div class="msg me"><span class="by">You · ' + modeLabel(C.m1) + '</span><div class="bubble">' + esc(C.a1) + '</div></div>';
+    if (!C.challenge) h += '<div class="chk-chal"><span class="by">Stress test</span><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>';
+    else h += '<div class="chk-chal"><span class="by">Stress test · a sceptical reader asks</span><div class="bubble">' + esc(C.challenge) + '</div></div>';
+    if (C.stage === 2 && C.challenge) h += answerBox('a2');
+    if (C.stage === 3){
+      h += '<div class="msg me"><span class="by">You · ' + modeLabel(C.m2) + '</span><div class="bubble">' + esc(C.a2) + '</div></div>';
+      h += C.verdict ? '<div class="result ' + C.verdict + '"><b>' + VERDICT[C.verdict] + '</b><p>' + esc(C.note) + '</p></div>' : '<p class="note"><span class="typing"><i></i><i></i><i></i></span> Reading your answers…</p>';
+    }
+  }
+  return h + '</div></section>';
+}
+function fallbackChallenge(){
+  var t = S.check.target, it = checkItem(), type = it ? it.type : '';
+  if (t.kind === 'change'){
+    if (t.app && t.app !== 'own') return 'Parts of this sentence match the AI coach’s wording. Without the AI, how would you explain why this version is better?';
+    if (type==='claim-evidence') return 'A sceptical reader says the new sentence still doesn’t show how the evidence proves your claim. What would you tell them?';
+    return 'Suppose your teacher prefers the original sentence. What makes your new version better for a reader?';
+  }
+  return 'Imagine ' + (it && it.source==='ai' ? 'the AI coach' : 'your classmate') + ' pushes back: “Readers will still be confused here.” What in your paragraph answers that?';
+}
+function checkNext(){
+  var C = S.check; if (!C || S.busy) return;
+  Voice.stop();
+  if (C.stage === 1){
+    if (words(C.a1) < 3) return;
+    C.stage = 2; C.challenge = ''; S.busy = true; save(); renderStudent();
+    var done = function(txt){ C.challenge = txt; S.busy = false; save(); renderStudent(); var el = document.getElementById('check-a2'); if (el) el.focus(); };
+    if (!sample){ setTimeout(function(){ done(fallbackChallenge()); }, 350); return; }
+    llm('You are stress-testing an English learner’s explanation of one revision decision.\nWrite ONE short sceptical follow-up question (max 35 words) that a thoughtful reader or teacher might raise about the student’s explanation, so the student has to defend or refine their reasoning. Do not rewrite their text, do not give the answer, do not praise.\nTask: ' + S.task + '\nDecision: ' + decisionText() + '\nStudent’s explanation: "' + C.a1 + '"\nReturn JSON only: {"challenge":"..."}', 'quick')
+      .then(function(r){ done(r && r.challenge ? r.challenge : fallbackChallenge()); C.by = 'llm'; })
+      .catch(function(){ done(fallbackChallenge()); });
+    return;
+  }
+  if (C.stage === 2){
+    if (words(C.a2) < 3) return;
+    C.stage = 3; S.busy = true; save(); renderStudent();
+    var finish = function(r){
+      C.code1 = r.code1; C.code2 = r.code2; C.verdict = r.verdict; C.note = r.note; C.judgedBy = r.by; C.at = Date.now(); S.busy = false; save(); renderStudent();
+    };
+    var rules = function(){
+      var c1 = heuristicCode(C.a1).code, c2 = heuristicCode(C.a2).code, good = function(c){ return c==='REASON'||c==='EVAL'||c==='TRANSFER'; };
+      var n = (good(c1)?1:0) + (good(c2)?1:0);
+      var v = n===2 ? 'defended' : (n===1 ? 'partly' : 'not_yet');
+      return { code1:c1, code2:c2, verdict:v, note: v==='defended' ? 'You gave reasons both times and held your position under pressure.' : (v==='partly' ? 'One answer gave a clear reason. Try to say why, not only what, in both.' : 'Try explaining what the problem was and why your choice fixes it.'), by:'rules' };
+    };
+    if (!sample){ setTimeout(function(){ finish(rules()); }, 350); return; }
+    llm('Assess an English learner’s defence of one revision decision. Code observable evidence only, never infer hidden thinking.\nCodes: ACK (simple acceptance), DIFF (unsure, asks for help), REASON (explains why or how), EVAL (critically weighs alternatives or defends a position with reasons), TRANSFER (generalises the principle), OTHER.\nVerdict: "defended" (both answers give reasons that fit the decision and the challenge is answered), "partly" (some reasoning, but the challenge is not really answered or the reason is vague), "not_yet" (no real reasoning, or reasoning that misreads the problem).\nTask: ' + S.task + '\nDecision: ' + decisionText() + '\nQuestion: ' + checkQuestion() + '\nAnswer 1: "' + C.a1 + '"\nChallenge: "' + C.challenge + '"\nAnswer 2: "' + C.a2 + '"\nReturn JSON only: {"code1":"...","code2":"...","verdict":"defended|partly|not_yet","note":"max 22 words, addressed to the student, specific and constructive"}', 'quick')
+      .then(function(r){ if (!r || !VERDICT[r.verdict]) throw 0; finish({ code1: CODES[r.code1]?r.code1:'OTHER', code2: CODES[r.code2]?r.code2:'OTHER', verdict:r.verdict, note:r.note||'', by:'llm' }); })
+      .catch(function(){ finish(rules()); });
+  }
+}
+function checkInsight(){
+  var C = S.check; if (!C || C.stage !== 3 || !C.verdict) return '';
+  return '<section class="dsec"><h3>Decision check</h3><div class="result ' + C.verdict + '"><b>' + VERDICT[C.verdict] + '</b><p>' + esc(C.note) + '</p></div></section>';
+}
+function checkPanel(st){
+  var C = st.check; if (!C || C.none || !C.target) return '';
+  var t = C.target, it = (st.items||[]).filter(function(x){ return x.id===t.itemId; })[0];
+  var what = t.kind==='change' ? (t.before ? 'Changed “' + esc(t.before) + '” → “' + esc(t.after) + '”' : 'Added “' + esc(t.after) + '”') + (t.app && t.app!=='own' ? ' <span class="aitag">' + (t.app==='verbatim'?'AI wording':'adapted from AI') + '</span>' : '') : 'Kept “' + esc(t.sentence) + '”' + (it ? ' after ' + esc(it.source==='ai'?'AI coach':'classmate') + ' comment: “' + esc(it.text) + '”' : '');
+  return '<section class="panel"><div class="phd"><h2>Decision check</h2><span>random stress test before submitting</span></div>'
+    + '<p style="font-size:13.5px">' + what + '</p>'
+    + '<div class="tbl"><table style="min-width:560px"><thead><tr><th>Round</th><th>Student said</th><th>Engagement</th><th>Input</th></tr></thead><tbody>'
+    + '<tr><td>Explain</td><td><q>“' + esc(C.a1||'') + '”</q></td><td>' + (C.code1 ? codeTag(C.code1) : '—') + '</td><td>' + modeLabel(C.m1) + '</td></tr>'
+    + '<tr><td>Stress test<br><span class="muted" style="font-size:12px">“' + esc(C.challenge||'') + '”</span></td><td><q>“' + esc(C.a2||'') + '”</q></td><td>' + (C.code2 ? codeTag(C.code2) : '—') + '</td><td>' + modeLabel(C.m2) + '</td></tr>'
+    + '</tbody></table></div>'
+    + (C.verdict ? '<div class="result ' + C.verdict + '"><b>' + VERDICT[C.verdict] + '</b><p>' + esc(C.note||'') + '</p></div>' : '<p class="muted">Not finished.</p>') + '</section>';
+}
+/* demo data and flags for the check */
+var _demoClass = demoClass;
+demoClass = function(){
+  var rows = _demoClass();
+  var demo = [
+    {target:{kind:'change', before:'A 2023 survey found that 70% of teachers prefer using online tools.', after:'A 2023 survey found that 70% of teachers prefer online tools, which suggests schools are ready for the change.', app:'own'}, a1:'The comment said my evidence was about teachers, so I connected it to schools instead of students.', a2:'Because teachers run the classes, their readiness matters for whether online classes work, so it still supports my claim.', challenge:'Does teacher readiness really show that online classes are better for students?', m1:{voice:true}, m2:{voice:true}, code1:'REASON', code2:'EVAL', verdict:'defended', note:'Clear reasons both times, and you answered the challenge directly.'},
+    {target:{kind:'change', before:'However, some people think online classes are boring.', after:'However, interactive tools such as polls and breakout rooms can keep students engaged.', app:'verbatim'}, a1:'It sounds better.', a2:'I think it is better now.', challenge:'Parts of this sentence match the AI coach’s wording. Without the AI, how would you explain why this version is better?', m1:{typed:true}, m2:{typed:true}, code1:'ACK', code2:'ACK', verdict:'not_yet', note:'Try explaining what problem the original sentence had and how the new one fixes it.'},
+    {target:{kind:'kept', sentence:'In conclusion, schools should move all classes online.'}, a1:'I want a strong conclusion because my paragraph is persuasive.', a2:'Maybe all is too strong, but my point is that online is better.', challenge:'Your classmate says “all classes” goes beyond your evidence. What in your paragraph proves that much?', m1:{voice:true}, m2:{voice:true,typed:true}, code1:'REASON', code2:'DIFF', verdict:'partly', note:'Good reason at first; the challenge shows your claim may be stronger than your evidence.'}
+  ];
+  if (rows[0]) rows[0].check = Object.assign({stage:3}, demo[0]);
+  if (rows[1]) rows[1].check = Object.assign({stage:3}, demo[1]);
+  if (rows[3]) rows[3].check = Object.assign({stage:3}, demo[2]);
+  return rows;
+};
+var _flagsFor = flagsFor;
+flagsFor = function(st){
+  var f = _flagsFor(st);
+  if (st.check && st.check.verdict === 'not_yet') f.unshift({t:'Could not defend a revision decision', s:'Ask them to talk through that change in a short conference.'});
+  return f;
+};
+/* voice input: claude.ai dictation, else the browser's speech recognition */
+var Voice = { d:null, rec:null, live:null, disabled:false, SR: window.SpeechRecognition || window.webkitSpeechRecognition || null };
+Voice.available = function(){ if (Voice.disabled) return false; if (Voice.d) return true; return !!(Voice.SR && !window.claude); };
+Voice.append = function(field, txt){
+  if (!S.check || !txt) return;
+  var cur = S.check[field] || '', add = cur ? txt : txt.replace(/^\s+/, '');
+  if (cur && !/^\s/.test(add) && !/\s$/.test(cur)) add = ' ' + add;
+  S.check[field] = cur + add;
+  var mk = field==='a1'?'m1':'m2'; S.check[mk] = S.check[mk] || {}; S.check[mk].voice = true; save();
+  var ta = document.getElementById('check-' + field); if (ta){ ta.value = S.check[field]; grow(ta); }
+  var nb = $('[data-act="check-next"]'); if (nb) nb.disabled = words(S.check[field]) < 3;
+};
+Voice.partial = function(field, txt){ var el = document.getElementById('partial-' + field); if (el) el.textContent = txt ? txt + '…' : ''; };
+Voice.stop = function(){ if (!Voice.live) return; try { if (Voice.d) Voice.d.stop(); else if (Voice.rec) Voice.rec.stop(); } catch(e){} };
+if (window.claude && window.claude.use){
+  window.claude.use('dictation').then(function(d){
+    if (!d) return; Voice.d = d;
+    d.onFinal(function(e){ if (Voice.live) Voice.append(Voice.live, e.text); });
+    d.onPartial(function(e){ if (Voice.live) Voice.partial(Voice.live, e.text); });
+    d.onState(function(e){ if (e.state === 'idle'){ if (Voice.live) Voice.partial(Voice.live, ''); Voice.live = null; if (e.reason==='unavailable' || e.reason==='not_granted') Voice.disabled = true; if (e.reason==='rate_limited' || e.reason==='upstream_error') toast('Voice input stopped. Try again, or type your answer.'); renderStudent(); } });
+    if (S.step === 5) renderStudent();
+  }).catch(function(){});
+}
+function toggleMic(field){
+  if (Voice.live === field){ Voice.stop(); return; }
+  if (Voice.live) Voice.stop();
+  if (Voice.d){
+    Voice.live = field;
+    Voice.d.start().catch(function(err){ Voice.live = null; if (err && (err.code==='not_granted' || err.code==='unavailable')){ Voice.disabled = true; toast('Voice input is off for this page. You can type instead.'); } else if (err && err.code!=='stopped') toast('Could not start voice input. You can type instead.'); renderStudent(); });
+    renderStudent(); return;
+  }
+  if (Voice.SR && !window.claude){
+    var rec = new Voice.SR(); Voice.rec = rec; rec.lang = 'en-US'; rec.interimResults = true; rec.continuous = true;
+    rec.onresult = function(e){ var interim = ''; for (var i = e.resultIndex; i < e.results.length; i++){ var r = e.results[i]; if (r.isFinal) Voice.append(field, r[0].transcript); else interim += r[0].transcript; } Voice.partial(field, interim); };
+    rec.onerror = function(e){ if (e.error==='not-allowed' || e.error==='service-not-allowed'){ Voice.disabled = true; toast('Microphone access was blocked. You can type instead.'); } else if (e.error==='network'){ toast('Voice input needs a connection to the speech service. You can type instead.'); } };
+    rec.onend = function(){ Voice.partial(field, ''); Voice.live = null; Voice.rec = null; renderStudent(); };
+    try { rec.start(); Voice.live = field; } catch(e){ toast('Could not start voice input.'); }
+    renderStudent();
+  }
+}
 
 /* ================= events ================= */
 function render(){ if (VIEW==='student') renderStudent(); else renderTeacher(); }
@@ -967,6 +1197,7 @@ document.addEventListener('input', function(e){
   }
   if (t.dataset.reason){ var it = itemById(t.dataset.reason); if (it && it.decision){ it.decision.reason = t.value; save(); } }
   if (t.dataset.refl){ S.reflection[t.dataset.refl] = t.value; save(); }
+  if (t.dataset.check && S.check){ S.check[t.dataset.check] = t.value; var mk = t.dataset.check==='a1'?'m1':'m2'; S.check[mk] = S.check[mk] || {}; if (!Voice.live) S.check[mk].typed = true; save(); var nb = $('[data-act="check-next"]'); if (nb) nb.disabled = words(t.value) < 3; }
 });
 document.addEventListener('change', function(e){
   var t = e.target;
@@ -1009,7 +1240,9 @@ document.addEventListener('click', function(e){
   else if (a==='goto'){ S.step = +b.dataset.step; save(); renderStudent(); window.scrollTo(0,0); }
   else if (a==='analyse'){ analyse(); window.scrollTo(0,0); }
   else if (a==='to-reflect'){ S.step = 5; save(); renderStudent(); window.scrollTo(0,0); }
-  else if (a==='submit') submit();
+  else if (a==='mic') toggleMic(b.dataset.field);
+  else if (a==='check-next') checkNext();
+  else if (a==='submit'){ if (!checkDone()){ toast('Finish the decision check first.'); return; } submit(); }
   else if (a==='pick-student'){ T.sel = id || null; renderTeacher(); window.scrollTo(0,0); }
   else if (a==='src'){ T.src = b.dataset.src; T.sel = null; renderTeacher(); }
 });
