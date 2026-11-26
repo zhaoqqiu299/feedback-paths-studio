@@ -24,7 +24,7 @@ img{max-width:100%}
   --ink:#0F1A20; --ink-2:#34434C; --muted:#66737C; --faint:#9AA5AD;
   --line:rgba(15,23,32,.09); --line-2:rgba(15,23,32,.16);
   --accent:#0E8C70; --accent-2:#0B7A61; --accent-ink:#FFFFFF; --accent-soft:rgba(14,140,112,.10); --accent-ring:rgba(14,140,112,.32); --accent-glow:rgba(14,140,112,.22);
-  --btn-grad:linear-gradient(180deg, #17A586, #0B7A61); --btn-hi:rgba(255,255,255,.35);
+  --btn-grad:linear-gradient(180deg, #17A586, #0B7A61); --btn-hi:rgba(255,255,255,.35); --primary-bg:#111A20; --primary-hover:#2A363E; --primary-ink:#FFFFFF; --primary-shadow:0 1px 2px rgba(15,23,32,.2), 0 6px 16px -10px rgba(15,23,32,.5), inset 0 1px 0 rgba(255,255,255,.1);
   --ai:#5B4BD6; --ai-soft:rgba(91,75,214,.09); --ai-line:rgba(91,75,214,.22); --ai-grad:linear-gradient(135deg, #7B6CF0, #4F6CF0);
   --peer:#A2600F; --peer-soft:rgba(200,130,30,.11); --peer-line:rgba(200,130,30,.28); --peer-grad:linear-gradient(135deg, #F6B860, #E08A1E);
   --good:#11845A; --good-soft:rgba(17,132,90,.10); --warn:#B45F22; --warn-soft:rgba(214,120,50,.12); --bad:#C0323E; --bad-soft:rgba(192,50,62,.09);
@@ -48,7 +48,7 @@ img{max-width:100%}
   --ink:#ECF1F4; --ink-2:#C2CBD2; --muted:#87929C; --faint:#5C666F;
   --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
   --accent:#6EE7C5; --accent-2:#3CC9A4; --accent-ink:#04120E; --accent-soft:rgba(110,231,197,.12); --accent-ring:rgba(110,231,197,.38); --accent-glow:rgba(110,231,197,.45);
-  --btn-grad:linear-gradient(180deg, #8DF2D6, #3CC9A4); --btn-hi:rgba(255,255,255,.5);
+  --btn-grad:linear-gradient(180deg, #8DF2D6, #3CC9A4); --btn-hi:rgba(255,255,255,.5); --primary-bg:#EEF2F4; --primary-hover:#FFFFFF; --primary-ink:#0A0E11; --primary-shadow:0 1px 2px rgba(0,0,0,.4), inset 0 -1px 0 rgba(0,0,0,.12);
   --ai:#A99BFF; --ai-soft:rgba(169,155,255,.12); --ai-line:rgba(169,155,255,.2); --ai-grad:linear-gradient(135deg, #A99BFF, #5B7CFA);
   --peer:#F5B85C; --peer-soft:rgba(245,184,92,.12); --peer-line:rgba(245,184,92,.2); --peer-grad:linear-gradient(135deg, #FFD08A, #F59E3C);
   --good:#5EE0A8; --good-soft:rgba(94,224,168,.12); --warn:#F7A465; --warn-soft:rgba(247,164,101,.13); --bad:#FF8A93; --bad-soft:rgba(255,138,147,.12);
@@ -68,7 +68,7 @@ img{max-width:100%}
   --ink:#ECF1F4; --ink-2:#C2CBD2; --muted:#87929C; --faint:#5C666F;
   --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
   --accent:#6EE7C5; --accent-2:#3CC9A4; --accent-ink:#04120E; --accent-soft:rgba(110,231,197,.12); --accent-ring:rgba(110,231,197,.38); --accent-glow:rgba(110,231,197,.45);
-  --btn-grad:linear-gradient(180deg, #8DF2D6, #3CC9A4); --btn-hi:rgba(255,255,255,.5);
+  --btn-grad:linear-gradient(180deg, #8DF2D6, #3CC9A4); --btn-hi:rgba(255,255,255,.5); --primary-bg:#EEF2F4; --primary-hover:#FFFFFF; --primary-ink:#0A0E11; --primary-shadow:0 1px 2px rgba(0,0,0,.4), inset 0 -1px 0 rgba(0,0,0,.12);
   --ai:#A99BFF; --ai-soft:rgba(169,155,255,.12); --ai-line:rgba(169,155,255,.2); --ai-grad:linear-gradient(135deg, #A99BFF, #5B7CFA);
   --peer:#F5B85C; --peer-soft:rgba(245,184,92,.12); --peer-line:rgba(245,184,92,.2); --peer-grad:linear-gradient(135deg, #FFD08A, #F59E3C);
   --good:#5EE0A8; --good-soft:rgba(94,224,168,.12); --warn:#F7A465; --warn-soft:rgba(247,164,101,.13); --bad:#FF8A93; --bad-soft:rgba(255,138,147,.12);
@@ -115,12 +115,12 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .mark{display:inline-flex; gap:2px} .mark b{width:3px; height:16px; border-radius:2px; display:block}
 .brand small{font-weight:500; color:var(--muted); font-size:13px; padding:2px 8px; border:1px solid var(--line); border-radius:999px}
 .steps{display:flex; justify-content:center; align-items:center; gap:0; list-style:none; margin:0; padding:0; min-width:0}
-.steps li{display:flex; align-items:center; min-width:0}
-.steps li + li::before{content:""; flex:none; width:28px; height:2px; border-radius:2px; background:var(--line-2); margin:0 2px}
+.steps li{display:flex; align-items:center; flex:none}
+.steps li + li::before{content:""; flex:none; width:24px; height:2px; border-radius:2px; background:var(--line-2); margin:0 6px}
 .steps li.done + li::before{background:linear-gradient(90deg, var(--accent-2), var(--accent))}
 .stp{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:999px; font-size:13px; font-weight:500; color:var(--muted); border:0; background:none; white-space:nowrap; transition:color .2s, background .2s}
 .stp .n{width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:650; border:1.5px solid var(--line-2); color:var(--muted); transition:all .25s}
-.stp.done{color:var(--ink-2)} .stp.done .n{background:var(--btn-grad); border-color:transparent; color:var(--accent-ink)}
+.stp.done{color:var(--ink-2)} .stp.done .n{background:var(--accent); border-color:transparent; color:var(--accent-ink)}
 .stp.cur{color:var(--ink); font-weight:600} .stp.cur .n{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
 button.stp:hover{background:var(--fill-2); color:var(--ink)}
 .actions{display:flex; align-items:center; gap:8px}
@@ -133,7 +133,8 @@ button.stp:hover{background:var(--fill-2); color:var(--ink)}
 .status{display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); padding:0 4px}
 .status .dot{width:7px; height:7px; border-radius:50%; background:var(--faint)}
 .status .dot.on{background:var(--good)}
-@media (max-width: 1160px){ .steps .lbl{display:none} .stp.cur .lbl{display:inline} .status span:last-child{display:none} }
+@media (max-width: 1440px){ .status span:last-child{display:none} }
+@media (max-width: 1360px){ .steps .lbl{display:none} .stp.cur .lbl{display:inline} }
 @media (max-width: 480px){ .brand{font-size:0; gap:0} }
 @media (max-width: 760px){ .topbar-in{grid-template-columns:minmax(0,1fr) auto; height:auto; padding-block:10px; row-gap:8px; gap:10px} .steps{grid-column:1 / -1; order:3; justify-content:flex-start; overflow-x:auto} .brand small, .status, .iconbtn .ibl{display:none} .role button{padding:5px 10px} .actions{gap:6px} }
 
@@ -147,16 +148,14 @@ button.stp:hover{background:var(--fill-2); color:var(--ink)}
 .stagehead h1 .w{display:inline-block}
 .stagehead p{color:var(--muted); margin-top:10px; max-width:62ch; font-size:14.5px}
 .btns{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-.btn{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; padding:0 18px; border-radius:999px; border:1px solid transparent; font-size:14px; font-weight:600; transition:transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s, background .2s, opacity .2s; isolation:isolate; overflow:hidden}
-.btn.primary{color:var(--accent-ink); background:var(--btn-grad); box-shadow:0 0 0 1px var(--accent-ring), 0 10px 26px -12px var(--accent-glow), inset 0 1px 0 var(--btn-hi)}
-.btn.primary::after{content:""; position:absolute; inset:0; background:linear-gradient(115deg, transparent 30%, var(--btn-hi) 50%, transparent 70%); transform:translateX(-120%); transition:transform .7s ease; z-index:-1}
-.btn.primary:hover::after{transform:translateX(120%)}
-.btn.primary:hover{transform:translateY(-1px); box-shadow:0 0 0 1px var(--accent-ring), 0 14px 32px -12px var(--accent-glow), inset 0 1px 0 var(--btn-hi)}
-.stagehead .btn.primary:not(:disabled)::before{content:""; position:absolute; inset:0; border-radius:inherit; padding:1.5px; background:conic-gradient(from var(--ang), transparent 0 72%, var(--btn-hi) 84%, var(--accent) 90%, transparent 97%); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; animation:orbit 4s linear infinite; z-index:1; pointer-events:none}
-@keyframes orbit{to{--ang:360deg}}
-.btn.secondary{background:var(--fill); border-color:var(--line-2); color:var(--ink)} .btn.secondary:hover{background:var(--fill-2)}
+.btn{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; height:38px; padding:0 16px; border-radius:10px; border:1px solid transparent; font-size:14px; font-weight:560; letter-spacing:-.005em; transition:transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s, background .2s, opacity .2s; isolation:isolate; overflow:hidden}
+.btn.primary{color:var(--primary-ink); background:var(--primary-bg); box-shadow:var(--primary-shadow)}
+.btn .i{transition:transform .2s}
+.btn:not(:disabled):hover .i{transform:translateX(2px)}
+.btn.primary:hover{background:var(--primary-hover)}
+.btn.secondary{background:var(--solid); border-color:var(--line-2); color:var(--ink); box-shadow:var(--shadow-sm)} .btn.secondary:hover{background:var(--fill-2)}
 .btn.quiet{background:none; color:var(--muted); padding:0 12px} .btn.quiet:hover{color:var(--ink); background:var(--fill-2)}
-.btn:disabled{opacity:.4; cursor:not-allowed; box-shadow:none; transform:none}
+.btn:disabled{opacity:.38; cursor:not-allowed; box-shadow:none}
 .btn.sm{height:32px; padding:0 14px; font-size:13px}
 .workspace{display:grid; grid-template-columns:minmax(0,1fr) 410px; gap:28px; align-items:start}
 @media (max-width: 1060px){ .workspace{grid-template-columns:minmax(0,1fr)} }
@@ -229,8 +228,8 @@ details.why code{font-family:var(--m); font-size:11px; color:var(--accent)}
 .composer:focus-within{border-color:var(--accent-ring); box-shadow:0 0 0 4px var(--accent-soft)}
 .composer textarea{flex:1; border:0; outline:0; resize:none; background:none; font-size:13.5px; line-height:1.5; padding:5px 0; min-height:22px; max-height:160px; caret-color:var(--accent)}
 .composer textarea::placeholder, .ftyped::placeholder{color:var(--faint)}
-.send{width:32px; height:32px; border-radius:50%; border:0; display:grid; place-items:center; background:var(--btn-grad); color:var(--accent-ink); flex:none; transition:transform .2s}
-.send:hover{transform:scale(1.06)}
+.send{width:32px; height:32px; border-radius:9px; border:0; display:grid; place-items:center; background:var(--primary-bg); color:var(--primary-ink); flex:none; transition:transform .2s}
+.send:hover{background:var(--primary-hover)}
 .send:disabled{background:var(--fill-2); color:var(--faint); cursor:not-allowed}
 .chips{display:flex; flex-wrap:wrap; gap:6px}
 .chip{border:1px solid var(--line); background:var(--fill); border-radius:999px; padding:5px 11px; font-size:12.5px; font-weight:500; color:var(--ink-2); transition:all .2s}
@@ -277,6 +276,9 @@ details.why code{font-family:var(--m); font-size:11px; color:var(--accent)}
 .reflect textarea:focus{outline:0; border-color:var(--accent-ring); box-shadow:0 0 0 4px var(--accent-soft)}
 .note{position:relative; font-size:12.5px; color:var(--muted); background:var(--fill); border:1px solid var(--line); border-radius:12px; padding:10px 12px}
 .note.ok{background:var(--good-soft); color:var(--good); border-color:transparent}
+.donechip{display:inline-flex; align-items:center; gap:6px; height:38px; padding:0 14px; border-radius:10px; font-size:13.5px; font-weight:600; color:var(--good); background:var(--good-soft)}
+.confirmbar{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin:-8px 0 22px; padding:12px 14px 12px 16px; border-radius:12px; background:var(--solid); border:1px solid var(--warn-soft); box-shadow:var(--shadow); font-size:13.5px; color:var(--ink-2)}
+.confirmbar b{color:var(--ink)}
 .finalcard{border-radius:18px; padding:20px; display:grid; gap:14px; border-color:var(--warn-soft)}
 .finalcard h3{font-size:16px; font-weight:650; letter-spacing:-.01em}
 .finalcard ul{margin:0; padding:0; list-style:none; display:grid; gap:8px; font-size:13px; color:var(--ink-2)}
@@ -831,9 +833,9 @@ function decidedCount(){ return S.items.filter(function(i){ return i.decision; }
 function renderTop(){
   var st = $('#steps'), ac = $('#actions');
   if (VIEW === 'student'){
-    st.innerHTML = STEPS.map(function(n,i){ var k=i+1, cls = k<S.step?'done':(k===S.step?'cur':''), can = k<S.step && k>=2 && k!==1;
+    st.innerHTML = STEPS.map(function(n,i){ var k=i+1, cls = k<S.step?'done':(k===S.step?'cur':''), can = k<S.step && (k===1 || !checkDone());
       var inner = '<span class="n">' + (k<S.step?'✓':k) + '</span><span class="lbl">' + n + '</span>';
-      return '<li class="' + cls + '">' + (can ? '<button class="stp '+cls+'" data-act="goto" data-step="'+k+'">'+inner+'</button>' : '<span class="stp '+cls+'"' + (k===S.step?' aria-current="step"':'') + '>'+inner+'</span>') + '</li>'; }).join('');
+      return '<li class="' + cls + '">' + (can ? '<button class="stp '+cls+'" data-act="' + (k===1 ? 'new-draft' : 'goto') + '" data-step="'+k+'"' + (k===1 ? ' title="Start over with a new draft"' : '') + '>'+inner+'</button>' : '<span class="stp '+cls+'"' + (k===S.step?' aria-current="step"':'') + '>'+inner+'</span>') + '</li>'; }).join('');
     st.hidden = false;
   } else { st.innerHTML = ''; st.hidden = true; }
   var own = S.analysis && S.step>=4 ? S.analysis.own : (S.step>=3 ? ownershipLive() : null);
@@ -858,9 +860,10 @@ function stageHead(){
     2:['Discuss the feedback', 'Reply to each comment, ask for the kind of help you want, and decide what to do with it.' + (n ? ' <b style="color:var(--ink)">' + d + ' of ' + n + ' decided.</b>' : ''), '<button class="btn primary" data-act="to-revise">Start revising ' + ICON.arrow + '</button>'],
     3:['Revise in your own words', 'Edit your paragraph. Your comments stay in the margin so you can keep discussing them.', '<button class="btn quiet" data-act="goto" data-step="2">Back</button><button class="btn primary" data-act="analyse">Review changes ' + ICON.arrow + '</button>'],
     4:['See how feedback shaped your revision', 'Every change is matched to the comment it answers, and checked for whose words it uses.', '<button class="btn quiet" data-act="goto" data-step="3">Edit revision</button><button class="btn primary" data-act="to-reflect" ' + (S.busy?'disabled':'') + '>Reflect &amp; submit ' + ICON.arrow + '</button>'],
-    5:['Reflect, then take the final check', 'Answer three short questions. Then explain one decision out loud in a locked final check, and submit.', (checkDone() ? '' : '<button class="btn quiet" data-act="goto" data-step="4">Back</button>') + (checkDone() ? '<button class="btn primary" disabled>' + (S.submitted ? 'Submitted' : 'Completed') + '</button>' : '<button class="btn primary" data-act="start-check">Start final check ' + ICON.arrow + '</button>')]
+    5:['Reflect, then take the final check', 'Answer three short questions. Then explain one decision out loud in a locked final check, and submit.', (checkDone() ? '' : '<button class="btn quiet" data-act="goto" data-step="4">Back</button>') + (checkDone() ? '<span class="donechip">' + ICON.check + (S.submitted ? 'Submitted' : 'Completed') + '</span><button class="btn secondary" data-act="new-draft">Start a new draft</button>' : '<button class="btn primary" data-act="start-check">Start final check ' + ICON.arrow + '</button>')]
   }[S.step];
-  return '<div class="stagehead"><div><span class="eyebrow shiny">Step ' + S.step + ' of 5 · ' + STEPS[S.step-1] + '</span><h1 data-k="s' + S.step + '">' + H[0] + '</h1><p>' + H[1] + '</p></div><div class="btns">' + H[2] + '</div></div>';
+  return '<div class="stagehead"><div><span class="eyebrow shiny">Step ' + S.step + ' of 5 · ' + STEPS[S.step-1] + '</span><h1 data-k="s' + S.step + '">' + H[0] + '</h1><p>' + H[1] + '</p></div><div class="btns">' + H[2] + '</div></div>'
+    + (UI.confirmNew ? '<div class="confirmbar" role="alert"><span><b>Start over with a new draft?</b> This clears your feedback, revision, reflection and final check.</span><div class="btns"><button class="btn quiet sm" data-act="cancel-new">Cancel</button><button class="btn primary sm" data-act="confirm-new">Start over</button></div></div>' : '');
 }
 
 /* ---------- student: document ---------- */
@@ -1465,6 +1468,9 @@ document.addEventListener('click', function(e){
   if (a==='toggle-pop'){ UI.pop = !UI.pop; UI.confirmReset=false; renderTop(); return; }
   if (a==='style'){ S.style = b.dataset.style; save(); renderTop(); return; }
   if (a==='reset'){ if (UI.confirmReset){ S = fresh(); save(); UI.pop=false; UI.confirmReset=false; renderStudent(); window.scrollTo(0,0); } else { UI.confirmReset = true; renderTop(); } return; }
+  if (a==='new-draft'){ UI.confirmNew = true; renderStudent(); window.scrollTo({top:0, behavior:'smooth'}); return; }
+  if (a==='cancel-new'){ UI.confirmNew = false; renderStudent(); return; }
+  if (a==='confirm-new'){ UI.confirmNew = false; S = fresh(); save(); renderStudent(); window.scrollTo(0,0); return; }
   if (a==='start') startFeedback();
   else if (a==='sample'){ S.draft = SAMPLE; save(); renderStudent(); }
   else if (a==='open'){ S.open = S.open===id && b.tagName==='BUTTON' ? null : id; save(); renderStudent(); var card = document.getElementById('card-'+id); if (card && b.tagName==='MARK') card.scrollIntoView({block:'nearest', behavior:'smooth'}); }
