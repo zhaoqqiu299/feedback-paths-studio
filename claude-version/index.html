@@ -2,224 +2,297 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout concept: a writing studio. Draft on the left, feedback threads in the middle, an "agency" instrument panel on the right that shows who is doing the thinking. Same pale yellow-green and deep green identity as the Feedback Paths project page. */
+/* Layout concept: a document-first writing tool. The student's page sits at the centre like a real document; feedback lives in the margin as comments; research instruments (agency metrics, coach policy) stay one click away instead of crowding the screen. */
 :root{
-  --base:#F2F7E1; --cream:#FBFCEF; --sage:#E4EECB; --mint:#DCEBDD; --paper:#FFFFFF;
-  --ink:#13211A; --muted:#55665C; --line:#D3DEC3;
-  --accent:#1F5C4F; --on-accent:#FFFFFF; --lime:#B9D46A; --accent-soft:#D7E8CF;
-  --peer:#A9760E; --peer-soft:#F6EBCF; --ai:#2860C4; --ai-soft:#DFE8F8;
-  --c-ack:#768379; --c-diff:#A9760E; --c-reason:#2860C4; --c-eval:#7343AE; --c-transfer:#14785A; --c-other:#8A8F8C;
-  --ins:#14785A; --ins-bg:#CFEEDC; --del:#B42430; --del-bg:#FADFE1; --warn:#B4632A;
-  --f:"Inter","Helvetica Neue",Arial,sans-serif; --m:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --bg:#F4F5F2; --surface:#FFFFFF; --sunken:#F0F2EE; --ink:#151D19; --ink-2:#36423C; --muted:#6A766F; --faint:#98A29C;
+  --line:#E3E7E2; --line-2:#D2D9D3;
+  --accent:#1F5C4F; --accent-hover:#184A40; --accent-ink:#FFFFFF; --accent-soft:#E4EFEA;
+  --ai:#4A55C2; --ai-soft:#EEF0FC; --peer:#B0701A; --peer-soft:#FBF2E3;
+  --good:#1D7A54; --good-soft:#E3F3EA; --warn:#B4632A; --warn-soft:#FBEDE0; --bad:#B02A35; --bad-soft:#FBE6E8;
+  --c-ack:#7C877F; --c-diff:#B0701A; --c-reason:#4A55C2; --c-eval:#7A46B0; --c-transfer:#1D7A54; --c-other:#A3ABA6;
+  --ins-bg:#DDF2E6; --ins:#16704C; --del-bg:#FBE3E5; --del:#A8262F;
+  --shadow-sm:0 1px 2px rgba(18,28,22,.06);
+  --shadow:0 1px 2px rgba(18,28,22,.05), 0 10px 30px -16px rgba(18,28,22,.22);
+  --shadow-lg:0 24px 60px -24px rgba(18,28,22,.35);
+  --f:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --m:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --base:#0F1812; --cream:#131E17; --sage:#17251B; --mint:#112019; --paper:#1C2B22;
-  --ink:#E6EFE6; --muted:#9CB0A3; --line:#2B3A30;
-  --accent:#86D0B7; --on-accent:#0F1812; --lime:#7E9A35; --accent-soft:#1E3A2F;
-  --peer:#E2B04A; --peer-soft:#3A2F14; --ai:#83ACF2; --ai-soft:#1C2A44;
-  --c-ack:#9DAAA0; --c-diff:#E2B04A; --c-reason:#83ACF2; --c-eval:#BB96EA; --c-transfer:#66CEA2; --c-other:#9AA09C;
-  --ins:#66CEA2; --ins-bg:#163628; --del:#F2878F; --del-bg:#3D1C20; --warn:#E89A62; color-scheme:dark; } }
+  --bg:#0F1412; --surface:#171E1B; --sunken:#1C2420; --ink:#E7ECE9; --ink-2:#C5CFCA; --muted:#94A19A; --faint:#6E7A74;
+  --line:#26302B; --line-2:#323D37;
+  --accent:#7FCDB6; --accent-hover:#9ADBC7; --accent-ink:#0F1412; --accent-soft:#1D3A32;
+  --ai:#9AA3F2; --ai-soft:#22264A; --peer:#E2B05A; --peer-soft:#3A2D16;
+  --good:#6BD3A4; --good-soft:#163628; --warn:#EBA06A; --warn-soft:#3B2716; --bad:#F2878F; --bad-soft:#3D1C20;
+  --c-ack:#9DA8A1; --c-diff:#E2B05A; --c-reason:#9AA3F2; --c-eval:#BE98EC; --c-transfer:#6BD3A4; --c-other:#7E8A84;
+  --ins-bg:#163628; --ins:#6BD3A4; --del-bg:#3D1C20; --del:#F2878F;
+  --shadow-sm:none; --shadow:0 0 0 1px var(--line); --shadow-lg:0 24px 60px -20px rgba(0,0,0,.6); color-scheme:dark; } }
 :root[data-theme="dark"]{
-  --base:#0F1812; --cream:#131E17; --sage:#17251B; --mint:#112019; --paper:#1C2B22;
-  --ink:#E6EFE6; --muted:#9CB0A3; --line:#2B3A30;
-  --accent:#86D0B7; --on-accent:#0F1812; --lime:#7E9A35; --accent-soft:#1E3A2F;
-  --peer:#E2B04A; --peer-soft:#3A2F14; --ai:#83ACF2; --ai-soft:#1C2A44;
-  --c-ack:#9DAAA0; --c-diff:#E2B04A; --c-reason:#83ACF2; --c-eval:#BB96EA; --c-transfer:#66CEA2; --c-other:#9AA09C;
-  --ins:#66CEA2; --ins-bg:#163628; --del:#F2878F; --del-bg:#3D1C20; --warn:#E89A62; color-scheme:dark; }
+  --bg:#0F1412; --surface:#171E1B; --sunken:#1C2420; --ink:#E7ECE9; --ink-2:#C5CFCA; --muted:#94A19A; --faint:#6E7A74;
+  --line:#26302B; --line-2:#323D37;
+  --accent:#7FCDB6; --accent-hover:#9ADBC7; --accent-ink:#0F1412; --accent-soft:#1D3A32;
+  --ai:#9AA3F2; --ai-soft:#22264A; --peer:#E2B05A; --peer-soft:#3A2D16;
+  --good:#6BD3A4; --good-soft:#163628; --warn:#EBA06A; --warn-soft:#3B2716; --bad:#F2878F; --bad-soft:#3D1C20;
+  --c-ack:#9DA8A1; --c-diff:#E2B05A; --c-reason:#9AA3F2; --c-eval:#BE98EC; --c-transfer:#6BD3A4; --c-other:#7E8A84;
+  --ins-bg:#163628; --ins:#6BD3A4; --del-bg:#3D1C20; --del:#F2878F;
+  --shadow-sm:none; --shadow:0 0 0 1px var(--line); --shadow-lg:0 24px 60px -20px rgba(0,0,0,.6); color-scheme:dark; }
+
 *{box-sizing:border-box}
-body{background:var(--base); color:var(--ink); font-family:var(--f); font-size:15px; line-height:1.55}
-h1,h2,h3,h4{margin:0; line-height:1.2; letter-spacing:-0.01em}
-p{margin:0}
-button{font-family:var(--f); cursor:pointer}
+html,body{height:100%}
+body{background:var(--bg); color:var(--ink); font-family:var(--f); font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+button,input,textarea,select{font:inherit; color:inherit}
+button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-.pad{padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px))}
-.wrap{max-width:1360px; margin:0 auto}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
 .muted{color:var(--muted)}
-.small{font-size:.82rem}
-.mono{font-family:var(--m)}
+svg.i{width:16px; height:16px; flex:none; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
-/* top bar */
-body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--base)}
-.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:6; background:color-mix(in srgb, var(--base) 90%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
-.top .wrap{display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:10px; flex-wrap:wrap}
-.brand{display:flex; align-items:center; gap:8px; font-weight:800}
-.brand i{display:inline-flex; gap:2px}
-.brand i b{width:4px; height:14px; border-radius:2px; display:block}
-.brand span{font-weight:500; color:var(--muted); font-size:.85rem}
-.tabs{display:flex; gap:4px; background:var(--sage); padding:4px; border-radius:12px}
-.tab{border:0; background:transparent; color:var(--muted); font-weight:600; font-size:.88rem; padding:7px 14px; border-radius:9px}
-.tab[aria-selected="true"]{background:var(--paper); color:var(--ink); box-shadow:0 2px 8px -4px rgba(20,60,40,.4)}
-.status{display:flex; gap:8px; align-items:center; font-size:.78rem; color:var(--muted)}
-.dot{width:8px; height:8px; border-radius:50%; background:var(--c-other); display:inline-block}
-.dot.on{background:var(--ins); box-shadow:0 0 0 4px color-mix(in srgb, var(--ins) 20%, transparent)}
+/* ---------- top bar ---------- */
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:30; background:var(--surface)}
+.topbar{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--surface); border-bottom:1px solid var(--line);
+  padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+.topbar-in{max-width:1280px; margin:0 auto; height:60px; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:24px}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; letter-spacing:-.01em; color:var(--ink); text-decoration:none; white-space:nowrap}
+.mark{display:inline-flex; gap:2px} .mark b{width:3px; height:15px; border-radius:2px; display:block}
+.brand small{font-weight:500; color:var(--muted); font-size:13px}
+.steps{display:flex; justify-content:center; align-items:center; gap:4px; list-style:none; margin:0; padding:0; min-width:0}
+.steps li{display:flex; align-items:center; gap:4px; min-width:0}
+.steps li + li::before{content:""; width:20px; height:1px; background:var(--line-2)}
+.stp{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:8px; font-size:13px; font-weight:500; color:var(--muted); border:0; background:none; white-space:nowrap}
+.stp .n{width:20px; height:20px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:600; border:1.5px solid var(--line-2); color:var(--muted)}
+.stp.done{color:var(--ink-2)} .stp.done .n{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.stp.cur{color:var(--ink); font-weight:600} .stp.cur .n{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+button.stp:hover{background:var(--sunken)}
+.actions{display:flex; align-items:center; gap:8px}
+.role{display:flex; background:var(--sunken); border-radius:9px; padding:3px}
+.role button{border:0; background:none; padding:5px 12px; border-radius:7px; font-size:13px; font-weight:500; color:var(--muted)}
+.role button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow-sm)}
+.iconbtn{display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 10px; border-radius:9px; border:1px solid var(--line); background:var(--surface); font-size:13px; font-weight:500; color:var(--ink-2)}
+.iconbtn:hover{border-color:var(--line-2); background:var(--sunken)}
+.ring{width:18px; height:18px}
+.status{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); padding:0 4px}
+.status .dot{width:7px; height:7px; border-radius:50%; background:var(--faint)}
+.status .dot.on{background:var(--good)}
+@media (max-width: 1080px){ .steps .lbl{display:none} .stp.cur .lbl{display:inline} .status span:last-child{display:none} }
+@media (max-width: 760px){ .topbar-in{grid-template-columns:minmax(0,1fr) auto; height:auto; padding-block:10px; row-gap:8px; gap:12px} .steps{grid-column:1 / -1; order:3; justify-content:flex-start; overflow-x:auto} .brand small, .status, .iconbtn .ibl{display:none} .role button{padding:5px 9px} }
 
-/* stepper */
-.stepper{display:flex; gap:6px; flex-wrap:wrap; padding-block:16px 4px}
-.step{display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--cream); color:var(--muted); border-radius:999px; padding:6px 12px 6px 6px; font-size:.84rem; font-weight:600}
-.step b{width:22px; height:22px; border-radius:50%; display:grid; place-items:center; background:var(--sage); color:var(--muted); font-size:.75rem}
-.step.done{color:var(--ink)} .step.done b{background:var(--accent-soft); color:var(--accent)}
-.step.cur{border-color:var(--accent); color:var(--ink); background:var(--paper)} .step.cur b{background:var(--accent); color:var(--on-accent)}
+/* ---------- stage ---------- */
+.stage{max-width:1280px; margin:0 auto; padding:28px max(16px, env(safe-area-inset-right,0px)) 64px max(16px, env(safe-area-inset-left,0px))}
+.stagehead{display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:22px; flex-wrap:wrap}
+.stagehead h1{font-size:22px; font-weight:650; letter-spacing:-.02em}
+.stagehead p{color:var(--muted); margin-top:4px; max-width:62ch}
+.btns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:38px; padding:0 16px; border-radius:10px; border:1px solid transparent; font-size:14px; font-weight:600; transition:background .15s, border-color .15s, transform .15s}
+.btn.primary{background:var(--accent); color:var(--accent-ink)} .btn.primary:hover{background:var(--accent-hover)}
+.btn.secondary{background:var(--surface); border-color:var(--line-2); color:var(--ink)} .btn.secondary:hover{background:var(--sunken)}
+.btn.quiet{background:none; color:var(--muted); padding:0 10px} .btn.quiet:hover{color:var(--ink); background:var(--sunken)}
+.btn:disabled{opacity:.4; cursor:not-allowed}
+.btn.sm{height:32px; padding:0 12px; font-size:13px}
+.workspace{display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:28px; align-items:start}
+@media (max-width: 1040px){ .workspace{grid-template-columns:minmax(0,1fr)} }
 
-/* layout */
-.studio{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1.15fr) minmax(0,.8fr); gap:16px; padding-block:12px 40px; align-items:start}
-@media (max-width: 1180px){ .studio{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} .agency{grid-column:1 / -1} }
-@media (max-width: 760px){ .studio{grid-template-columns:minmax(0,1fr)} }
-.panel{background:var(--paper); border-radius:16px; padding:18px; display:grid; gap:12px; align-content:start; min-width:0}
-.panel.tint{background:var(--cream)}
-.ph{display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap}
-.ph h2{font-size:1.02rem}
-.eyebrow{font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent)}
-.task{background:var(--base); border-radius:10px; padding:10px 12px; font-size:.88rem}
-textarea, input[type="text"], select{width:100%; font:inherit; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:10px 12px}
-textarea{resize:vertical; line-height:1.6}
-textarea:focus, input[type="text"]:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft)}
-#draft, #revision{min-height:220px; font-size:.95rem}
-.btn{display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--accent); background:var(--accent); color:var(--on-accent); font-weight:600; font-size:.86rem; padding:8px 14px; border-radius:10px; transition:transform .15s}
-.btn:hover{transform:translateY(-1px)}
-.btn.line{background:transparent; color:var(--accent)}
-.btn.ghost{border-color:var(--line); background:var(--paper); color:var(--ink)}
-.btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
-.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-.wc{font-size:.76rem; color:var(--muted); font-variant-numeric:tabular-nums}
-.sentences{display:grid; gap:4px; font-size:.92rem; line-height:1.55}
-.sent{padding:4px 8px; border-radius:6px; border-left:3px solid transparent}
-.sent.hl-ai{background:var(--ai-soft); border-left-color:var(--ai)}
-.sent.hl-peer{background:var(--peer-soft); border-left-color:var(--peer)}
-.sent.flash{animation:flash 1.2s ease}
-@keyframes flash{0%{box-shadow:0 0 0 0 var(--lime)}40%{box-shadow:0 0 0 4px var(--lime)}100%{box-shadow:0 0 0 0 transparent}}
+/* ---------- document ---------- */
+.doc{background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:36px clamp(20px, 5vw, 56px) 44px; min-height:520px}
+.assign{display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border-radius:10px; background:var(--sunken); color:var(--ink-2); font-size:13.5px; margin-bottom:28px}
+.assign b{font-weight:600; color:var(--ink)}
+.doc-title{font-family:var(--serif); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin-bottom:10px}
+.doc-text{font-family:var(--serif); font-size:19px; line-height:1.85; color:var(--ink)}
+textarea.doc-edit{display:block; width:100%; border:0; outline:0; resize:none; background:transparent; font-family:var(--serif); font-size:19px; line-height:1.85; color:var(--ink); min-height:300px; padding:0}
+textarea.doc-edit::placeholder{color:var(--faint)}
+.doc-foot{display:flex; justify-content:space-between; gap:12px; margin-top:28px; padding-top:14px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted)}
+mark.anc{background:transparent; color:inherit; border-bottom:2px solid var(--c); padding-bottom:1px; cursor:pointer; border-radius:2px; transition:background .15s}
+mark.anc:hover{background:var(--cs)}
+mark.anc.on{background:var(--cs); box-shadow:0 0 0 3px var(--cs)}
+.doc-text ins{background:var(--ins-bg); color:var(--ins); text-decoration:none; border-radius:3px; padding:0 2px}
+.doc-text del{background:var(--del-bg); color:var(--del); border-radius:3px; padding:0 2px}
+.aitag{font-family:var(--f); font-size:11px; font-weight:600; vertical-align:3px; margin-left:4px; padding:1px 6px; border-radius:999px; background:var(--ai-soft); color:var(--ai)}
 
-/* feedback threads */
-.lanes{display:flex; gap:6px}
-.lanebtn{border:1px solid var(--line); background:var(--cream); border-radius:999px; padding:4px 10px; font-size:.78rem; font-weight:600; color:var(--muted)}
-.lanebtn[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
-.item{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--paper)}
-.item.open{box-shadow:0 18px 30px -26px rgba(20,60,40,.6)}
-.ihead{width:100%; display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:10px; align-items:start; padding:12px 14px; background:transparent; border:0; text-align:left; color:var(--ink)}
-.src{font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px}
-.src.ai{background:var(--ai-soft); color:var(--ai)} .src.peer{background:var(--peer-soft); color:var(--peer)}
-.ihead .t{font-size:.9rem}
-.ihead .meta{font-size:.72rem; color:var(--muted); margin-top:3px}
-.badge{font-size:.7rem; font-weight:700; padding:3px 8px; border-radius:999px; background:var(--sage); color:var(--muted); white-space:nowrap}
-.badge.acc{background:var(--ins-bg); color:var(--ins)} .badge.rej{background:var(--del-bg); color:var(--del)} .badge.adp{background:var(--accent-soft); color:var(--accent)}
-.ibody{padding:0 14px 14px; display:grid; gap:10px}
-.thread{display:grid; gap:8px}
-.turn{display:grid; gap:4px; max-width:92%}
-.turn.student{justify-self:end}
-.bubble{padding:9px 12px; border-radius:12px; font-size:.88rem; line-height:1.5}
-.turn.ai .bubble{background:var(--ai-soft)} .turn.peer .bubble{background:var(--peer-soft)} .turn.student .bubble{background:var(--sage)}
-.turn .who{font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
-.turn.student .who{text-align:right}
-.coded{display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:flex-end; font-size:.72rem}
-.code{display:inline-flex; align-items:center; gap:5px; font-family:var(--m); font-weight:600; font-size:.68rem; color:var(--cc); border:1px solid currentColor; padding:2px 7px; border-radius:999px}
-.code::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor}
-.ev{color:var(--muted); font-style:italic}
-.why{font-size:.74rem; color:var(--muted); background:var(--base); border-radius:8px; padding:6px 9px; display:flex; gap:8px; align-items:flex-start}
-.why .lv{font-family:var(--m); font-weight:600; color:var(--accent); white-space:nowrap}
-.compose{display:grid; gap:8px}
-.compose textarea{min-height:58px; font-size:.88rem}
-.helps{display:flex; flex-wrap:wrap; gap:6px}
-.help{border:1px solid var(--line); background:var(--cream); color:var(--ink); border-radius:999px; padding:5px 10px; font-size:.78rem; font-weight:600}
-.help:hover{border-color:var(--accent)}
-.help small{color:var(--muted); font-weight:500}
-.decide{display:grid; gap:8px; background:var(--base); border-radius:12px; padding:10px}
-.decide .opts{display:flex; gap:6px; flex-wrap:wrap}
-.opt{border:1.5px solid var(--line); background:var(--paper); border-radius:10px; padding:6px 12px; font-size:.82rem; font-weight:600; color:var(--ink)}
-.opt[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
-.typing{display:inline-flex; gap:3px} .typing i{width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1s infinite} .typing i:nth-child(2){animation-delay:.15s} .typing i:nth-child(3){animation-delay:.3s}
+/* ---------- margin / comments ---------- */
+.margin{display:grid; gap:12px; align-content:start}
+.mhead{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.mhead h2{font-size:14px; font-weight:600}
+.seg{display:inline-flex; background:var(--sunken); border-radius:8px; padding:2px}
+.seg button{border:0; background:none; padding:4px 10px; border-radius:6px; font-size:12.5px; font-weight:500; color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow-sm)}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; transition:border-color .15s, box-shadow .15s}
+.card:hover{border-color:var(--line-2)}
+.card.on{border-color:var(--line-2); box-shadow:var(--shadow)}
+.chead{display:flex; gap:10px; align-items:flex-start; padding:14px 14px 0; cursor:pointer; background:none; border:0; width:100%; text-align:left}
+.av{width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:700; flex:none}
+.av.ai{background:var(--ai-soft); color:var(--ai)} .av.peer{background:var(--peer-soft); color:var(--peer)} .av.me{background:var(--accent-soft); color:var(--accent)}
+.cwho{flex:1; min-width:0}
+.cwho b{font-size:13.5px; font-weight:600}
+.cwho span{display:block; font-size:12px; color:var(--muted); margin-top:1px}
+.pill{font-size:11.5px; font-weight:600; padding:2px 8px; border-radius:999px; white-space:nowrap; border:1px solid var(--line-2); color:var(--muted)}
+.pill.accept{background:var(--good-soft); color:var(--good); border-color:transparent}
+.pill.adapt{background:var(--accent-soft); color:var(--accent); border-color:transparent}
+.pill.reject{background:var(--bad-soft); color:var(--bad); border-color:transparent}
+.cbody{padding:8px 14px 14px 52px; display:grid; gap:10px}
+.ctext{font-size:14px; line-height:1.55; color:var(--ink-2)}
+.card:not(.on) .ctext{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.thread{display:grid; gap:10px; padding-top:4px}
+.msg{display:grid; gap:4px}
+.msg .by{font-size:11.5px; font-weight:600; color:var(--muted)}
+.bubble{font-size:13.5px; line-height:1.55; padding:9px 12px; border-radius:10px}
+.msg.ai .bubble{background:var(--ai-soft)} .msg.peer .bubble{background:var(--peer-soft)} .msg.me .bubble{background:var(--sunken)}
+.signal{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted)}
+.signal i{width:7px; height:7px; border-radius:50%; background:var(--c); display:block}
+.signal.warn{color:var(--warn)}
+details.why{font-size:12px; color:var(--muted)}
+details.why summary{cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:4px}
+details.why summary::-webkit-details-marker{display:none}
+details.why summary::before{content:"›"; display:inline-block; transition:transform .15s; font-size:14px; line-height:1}
+details.why[open] summary::before{transform:rotate(90deg)}
+details.why p{margin-top:6px; padding:8px 10px; background:var(--sunken); border-radius:8px; color:var(--ink-2)}
+details.why code{font-family:var(--m); font-size:11px; color:var(--accent)}
+.composer{border:1px solid var(--line-2); border-radius:10px; background:var(--surface); display:flex; align-items:flex-end; gap:6px; padding:6px 6px 6px 12px; transition:border-color .15s, box-shadow .15s}
+.composer:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.composer textarea{flex:1; border:0; outline:0; resize:none; background:none; font-size:13.5px; line-height:1.5; padding:5px 0; min-height:22px; max-height:160px}
+.send{width:30px; height:30px; border-radius:8px; border:0; display:grid; place-items:center; background:var(--accent); color:var(--accent-ink); flex:none}
+.send:disabled{background:var(--line-2); color:var(--muted); cursor:not-allowed}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:4px 10px; font-size:12.5px; font-weight:500; color:var(--ink-2)}
+.chip:hover{border-color:var(--line-2); background:var(--sunken)}
+.decide{display:grid; gap:8px; padding-top:10px; border-top:1px solid var(--line)}
+.decide .lbl{font-size:12px; font-weight:600; color:var(--muted)}
+.dseg{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--line-2); border-radius:9px; overflow:hidden}
+.dseg button{border:0; background:var(--surface); padding:7px 6px; font-size:13px; font-weight:500; color:var(--ink-2)}
+.dseg button + button{border-left:1px solid var(--line-2)}
+.dseg button[aria-pressed="true"]{background:var(--accent-soft); color:var(--accent); font-weight:600}
+.reason{width:100%; border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:13px; background:var(--surface)}
+.reason:focus{outline:0; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.typing{display:inline-flex; gap:3px; padding:4px 0} .typing i{width:5px; height:5px; border-radius:50%; background:var(--muted); animation:blink 1s infinite} .typing i:nth-child(2){animation-delay:.15s} .typing i:nth-child(3){animation-delay:.3s}
 @keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.empty{border:1px dashed var(--line-2); border-radius:12px; padding:22px; display:grid; gap:14px; background:transparent}
+.empty h3{font-size:14px; font-weight:600}
+.feat{display:grid; grid-template-columns:28px minmax(0,1fr); gap:10px; align-items:start; font-size:13px; color:var(--ink-2)}
+.feat .ic{width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:var(--sunken); color:var(--ink-2)}
+.feat b{display:block; color:var(--ink); font-weight:600}
+.addpeer{display:grid; gap:8px; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--surface)}
+.addpeer select, .addpeer textarea{width:100%; border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:13px; background:var(--surface)}
+.linkbtn{border:0; background:none; color:var(--accent); font-size:13px; font-weight:600; padding:4px 0; justify-self:start}
 
-/* agency panel */
-.agency{position:sticky; top:72px}
-@media (max-width: 1180px){ .agency{position:static} }
-.meter{display:grid; gap:6px}
-.meter .bar{height:10px; border-radius:6px; background:color-mix(in srgb, var(--ai) 22%, transparent); overflow:hidden; display:flex}
-.meter .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--lime), var(--accent)); transition:width .6s ease}
-.kv{display:flex; justify-content:space-between; gap:8px; font-size:.84rem}
-.kv b{font-variant-numeric:tabular-nums}
-.ctl{display:grid; gap:6px}
-.seg{display:flex; background:var(--base); border-radius:10px; padding:3px; gap:3px}
-.seg button{flex:1; border:0; background:transparent; border-radius:8px; padding:6px 4px; font-size:.76rem; font-weight:600; color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--paper); color:var(--ink); box-shadow:0 2px 6px -3px rgba(20,60,40,.4)}
-.switch{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:.84rem}
-.switch input{width:38px; height:22px; accent-color:var(--accent)}
-.mini-title{font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
-.spark{width:100%; height:auto; display:block}
-.codebars{display:grid; gap:6px; font-size:.78rem}
-.cbrow{display:grid; grid-template-columns:44px minmax(0,1fr); gap:8px; align-items:center}
-.stack{display:flex; height:12px; border-radius:6px; overflow:hidden; background:var(--base)}
+/* ---------- review ---------- */
+.summary{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:0}
+.summary div{padding:0 12px; border-left:1px solid var(--line)} .summary div:first-child{border-left:0; padding-left:0}
+.summary b{display:block; font-size:22px; font-weight:650; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.summary span{font-size:12px; color:var(--muted)}
+.jcard{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; display:grid; gap:10px}
+.jtop{display:flex; gap:10px; align-items:center}
+.jtop .cwho b{font-size:13px}
+.verdict{font-size:12px; font-weight:600; padding:2px 8px; border-radius:999px}
+.verdict.good{background:var(--good-soft); color:var(--good)} .verdict.warn{background:var(--warn-soft); color:var(--warn)} .verdict.eval{background:var(--ai-soft); color:var(--c-eval)} .verdict.other{background:var(--sunken); color:var(--muted)}
+.path{display:grid; grid-template-columns:repeat(5,1fr); gap:4px}
+.path span{height:4px; border-radius:2px; background:var(--line)}
+.path span.on{background:var(--accent)}
+.pathlbl{display:grid; grid-template-columns:repeat(5,1fr); gap:4px; font-size:10.5px; color:var(--muted)}
+.jnote{font-size:12.5px; color:var(--ink-2)}
+.reflect{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; display:grid; gap:14px}
+.reflect label{font-size:13px; font-weight:600; display:grid; gap:6px}
+.reflect textarea{border:1px solid var(--line); border-radius:8px; padding:8px 10px; min-height:70px; resize:vertical; font-size:13.5px; font-weight:400; background:var(--surface)}
+.reflect textarea:focus{outline:0; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.note{font-size:12.5px; color:var(--muted); background:var(--sunken); border-radius:8px; padding:10px 12px}
+.note.ok{background:var(--good-soft); color:var(--good)}
+
+/* ---------- drawer & popover ---------- */
+.scrim{position:fixed; inset:0; background:rgba(12,18,15,.32); z-index:40; opacity:0; pointer-events:none; transition:opacity .2s}
+.scrim.open{opacity:1; pointer-events:auto}
+.drawer{position:fixed; top:0; right:0; bottom:0; width:min(420px, 100vw); z-index:41; background:var(--surface); border-left:1px solid var(--line); box-shadow:var(--shadow-lg); transform:translateX(100%); transition:transform .25s cubic-bezier(.2,.7,.2,1); display:flex; flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); padding-right:env(safe-area-inset-right,0px)}
+.drawer.open{transform:none}
+.dhead{display:flex; justify-content:space-between; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line)}
+.dhead h2{font-size:16px; font-weight:650}
+.dbody{padding:20px; overflow-y:auto; display:grid; gap:24px; align-content:start}
+.dsec{display:grid; gap:10px}
+.dsec h3{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+.big{display:flex; align-items:center; gap:16px}
+.big b{font-size:30px; font-weight:650; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.big p{font-size:13px; color:var(--muted)}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.stat{background:var(--sunken); border-radius:10px; padding:12px}
+.stat b{display:block; font-size:20px; font-weight:650; font-variant-numeric:tabular-nums}
+.stat span{font-size:12px; color:var(--muted)}
+.bars{display:grid; gap:8px; font-size:12.5px}
+.barrow{display:grid; grid-template-columns:44px minmax(0,1fr); gap:10px; align-items:center}
+.stack{display:flex; height:10px; border-radius:5px; overflow:hidden; background:var(--sunken)}
 .stack i{display:block; height:100%}
-.legend{display:flex; flex-wrap:wrap; gap:8px; font-size:.7rem; color:var(--muted)}
-.legend span{display:inline-flex; align-items:center; gap:4px}
-.legend span::before{content:""; width:8px; height:8px; border-radius:2px; background:var(--lc)}
-.principles{display:grid; gap:6px; font-size:.78rem; color:var(--muted)}
-.principles li{margin-left:1em}
+.legend{display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; color:var(--muted)}
+.legend span{display:inline-flex; align-items:center; gap:5px}
+.legend span::before{content:""; width:8px; height:8px; border-radius:2px; background:var(--c)}
+.spark{width:100%; height:auto; display:block}
+.pop{position:absolute; right:0; top:42px; width:280px; background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-lg); padding:14px; display:grid; gap:14px; z-index:25}
+.pop h3{font-size:12px; font-weight:600; color:var(--muted)}
+.pop .seg{display:flex} .pop .seg button{flex:1}
+.toggle{display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:13px}
+.switch{position:relative; width:36px; height:20px; flex:none}
+.switch input{position:absolute; inset:0; opacity:0; margin:0; cursor:pointer}
+.switch span{position:absolute; inset:0; border-radius:999px; background:var(--line-2); transition:background .15s; pointer-events:none}
+.switch span::after{content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked + span{background:var(--accent)} .switch input:checked + span::after{transform:translateX(16px)}
+.switch input:focus-visible + span{outline:2px solid var(--accent); outline-offset:2px}
+.danger{color:var(--bad)}
+.relative{position:relative}
+.toast{position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--ink); color:var(--surface); padding:10px 16px; border-radius:10px; font-size:13px; z-index:50; box-shadow:var(--shadow-lg); max-width:calc(100vw - 32px)}
 
-/* analysis */
-.diff{display:grid; gap:6px; font-size:.88rem}
-.drow{display:grid; grid-template-columns:86px minmax(0,1fr); gap:8px; align-items:start; padding:6px 8px; border-radius:8px; background:var(--base)}
-.drow .k{font-size:.68rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); padding-top:2px}
-.drow .chips{display:flex; flex-wrap:wrap; gap:4px; margin-top:4px}
-ins{background:var(--ins-bg); color:var(--ins); text-decoration:none; border-radius:3px; padding:0 2px}
-del{background:var(--del-bg); color:var(--del); border-radius:3px; padding:0 2px}
-.chip{font-size:.68rem; font-weight:700; padding:2px 7px; border-radius:999px; background:var(--sage); color:var(--muted)}
-.chip.ai{background:var(--ai-soft); color:var(--ai)} .chip.own{background:var(--ins-bg); color:var(--ins)} .chip.warn{background:var(--peer-soft); color:var(--peer)}
-.journey{display:grid; gap:8px}
-.jcard{border:1px solid var(--line); border-radius:12px; padding:10px 12px; display:grid; gap:6px; background:var(--paper)}
-.jsteps{display:flex; flex-wrap:wrap; gap:4px; align-items:center; font-size:.74rem}
-.jsteps span{background:var(--base); border-radius:6px; padding:3px 7px; font-weight:600}
-.jsteps span.on{background:var(--accent); color:var(--on-accent)}
-.jsteps em{font-style:normal; color:var(--muted)}
-.quad{font-size:.78rem; font-weight:700}
-.reflect{display:grid; gap:10px}
-.reflect label{font-size:.84rem; font-weight:600}
-.notice{background:var(--peer-soft); color:var(--ink); border-radius:10px; padding:10px 12px; font-size:.84rem}
-.ok{background:var(--ins-bg); border-radius:10px; padding:10px 12px; font-size:.86rem}
-
-/* teacher */
-.tgrid{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px; padding-block:12px}
-.kpi{background:var(--paper); border-radius:14px; padding:14px 16px; display:grid; gap:2px}
-.kpi b{font-size:1.5rem; font-variant-numeric:tabular-nums}
-.kpi span{font-size:.78rem; color:var(--muted)}
-.tcols{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; padding-bottom:14px}
-.tcols3{display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr); gap:14px; padding-bottom:40px}
-@media (max-width: 980px){ .tgrid{grid-template-columns:repeat(2, minmax(0,1fr))} .tcols, .tcols3{grid-template-columns:minmax(0,1fr)} }
-.hbar{display:grid; grid-template-columns:120px minmax(0,1fr) 40px; gap:8px; align-items:center; font-size:.8rem}
-.hbar .t{height:10px; border-radius:5px; background:var(--base); overflow:hidden}
-.hbar .t i{display:block; height:100%; background:linear-gradient(90deg, var(--lime), var(--accent))}
+/* ---------- teacher ---------- */
+.tlayout{display:grid; grid-template-columns:270px minmax(0,1fr); gap:24px; align-items:start}
+@media (max-width: 900px){ .tlayout{grid-template-columns:minmax(0,1fr)} }
+.side{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px; display:grid; gap:4px; position:sticky; top:84px}
+@media (max-width: 900px){ .side{position:static} }
+.side h3{font-size:12px; font-weight:600; color:var(--muted); padding:8px 8px 4px; text-transform:uppercase; letter-spacing:.06em}
+.navi{display:flex; align-items:center; gap:10px; width:100%; border:0; background:none; text-align:left; padding:8px; border-radius:9px; font-size:13.5px; color:var(--ink-2)}
+.navi:hover{background:var(--sunken)}
+.navi[aria-current="true"]{background:var(--accent-soft); color:var(--ink); font-weight:600}
+.navi .meta{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); font-weight:500}
+.sdot{width:8px; height:8px; border-radius:50%; background:var(--good)} .sdot.warn{background:var(--warn)}
+.tmain{display:grid; gap:20px}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px; display:grid; gap:14px; min-width:0}
+.panel h2{font-size:15px; font-weight:600}
+.phd{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap}
+.phd span{font-size:12.5px; color:var(--muted)}
+.strip{display:grid; grid-template-columns:repeat(4,1fr); background:var(--surface); border:1px solid var(--line); border-radius:14px}
+.strip div{padding:16px 20px; border-left:1px solid var(--line)} .strip div:first-child{border-left:0}
+.strip b{display:block; font-size:24px; font-weight:650; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.strip span{font-size:12.5px; color:var(--muted)}
+@media (max-width: 760px){ .strip{grid-template-columns:repeat(2,1fr)} .strip div:nth-child(3){border-left:0} .strip div:nth-child(n+3){border-top:1px solid var(--line)} }
+.two{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+@media (max-width: 1100px){ .two{grid-template-columns:minmax(0,1fr)} }
+.hbar{display:grid; grid-template-columns:130px minmax(0,1fr) 40px; gap:12px; align-items:center; font-size:13px}
+.hbar .t{height:8px; border-radius:4px; background:var(--sunken); overflow:hidden}
+.hbar .t i{display:block; height:100%; border-radius:4px; background:var(--accent)}
 .hbar .v{text-align:right; color:var(--muted); font-variant-numeric:tabular-nums}
-.flag{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; padding:10px 12px; border-radius:10px; background:var(--base); font-size:.84rem; align-items:center}
-.flag .sug{font-size:.76rem; color:var(--muted); margin-top:2px}
-.slist{display:grid; gap:6px}
-.sbtn{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; text-align:left; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:10px; padding:8px 12px; font-size:.86rem}
-.sbtn[aria-pressed="true"]{border-color:var(--accent); background:var(--accent-soft)}
-.srcsel{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
-.override{display:inline-flex; gap:4px; align-items:center; font-size:.72rem}
-.override select{width:auto; padding:2px 6px; font-size:.72rem; border-radius:6px}
-.demo-tag{font-size:.7rem; font-weight:700; color:var(--peer); background:var(--peer-soft); padding:2px 8px; border-radius:999px}
-table{border-collapse:collapse; width:100%; font-size:.82rem}
-th, td{text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top}
-th{font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
-.scroll{overflow-x:auto}
+.att{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:12px; align-items:center; padding:12px 0; border-top:1px solid var(--line)}
+.att:first-of-type{border-top:0}
+.att p{font-size:13.5px} .att p span{display:block; font-size:12.5px; color:var(--muted); margin-top:2px}
+.demo{font-size:11.5px; font-weight:600; color:var(--peer); background:var(--peer-soft); padding:2px 8px; border-radius:999px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:13px}
+th{font-size:11.5px; font-weight:600; color:var(--muted); text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); text-transform:uppercase; letter-spacing:.05em}
+td{padding:12px 10px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2)}
+tr:last-child td{border-bottom:0}
+td q{quotes:none; font-family:var(--serif); font-size:14px; color:var(--ink)}
+.codetag{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600}
+.codetag i{width:7px; height:7px; border-radius:50%; background:var(--c)}
+.codetag small{font-family:var(--m); font-size:10.5px; color:var(--muted); font-weight:500}
+select.ovr{border:1px solid var(--line); border-radius:6px; font-size:11.5px; padding:2px 4px; background:var(--surface); margin-top:4px}
+.back{display:inline-flex; align-items:center; gap:6px; border:0; background:none; color:var(--muted); font-size:13px; padding:0}
+.back:hover{color:var(--ink)}
 @media (prefers-reduced-motion: reduce){ *, *::before, *::after{animation:none!important; transition:none!important} }
 </style>
 
-<header class="top pad">
-  <div class="wrap">
-    <div class="brand"><i aria-hidden="true"><b style="background:var(--c-ack)"></b><b style="background:var(--c-diff)"></b><b style="background:var(--c-reason)"></b><b style="background:var(--c-eval)"></b></i>Feedback Paths <span>Studio · prototype</span></div>
-    <div class="tabs" role="tablist" aria-label="View">
-      <button class="tab" role="tab" id="tab-student" aria-selected="true" data-view="student">Student</button>
-      <button class="tab" role="tab" id="tab-teacher" aria-selected="false" data-view="teacher">Teacher</button>
-    </div>
-    <div class="status" id="status"><span class="dot" id="ai-dot"></span><span id="ai-label">Connecting to AI…</span></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#" data-act="home"><span class="mark" aria-hidden="true"><b style="background:var(--c-ack)"></b><b style="background:var(--c-diff)"></b><b style="background:var(--c-reason)"></b><b style="background:var(--c-eval)"></b></span>Feedback Paths <small>Studio</small></a>
+    <ol class="steps" id="steps" aria-label="Progress"></ol>
+    <div class="actions" id="actions"></div>
   </div>
 </header>
-
-<main>
-  <section id="view-student" class="pad"><div class="wrap" id="student"></div></section>
-  <section id="view-teacher" class="pad" hidden><div class="wrap" id="teacher"></div></section>
-</main>
+<main id="main"></main>
+<div class="scrim" id="scrim" data-act="close-drawer"></div>
+<aside class="drawer" id="drawer" aria-label="Insights" aria-hidden="true"></aside>
 
 <script>
 (function(){
@@ -298,9 +371,9 @@ function fresh(){
   return { step:1, task:TASK, draft:SAMPLE, revision:'', style:'questions', paused:false, lane:'all',
     items:[], open:null, helpLog:[], levelTrail:[], aiTexts:[], analysis:null, reflection:{changed:'',kept:'',ai:''}, submitted:null, busy:false, peerDraft:'' };
 }
-var S = load('fp-studio-v1') || fresh();
+var S = load('fp-studio-v2') || fresh();
 S.busy = false;
-function save(){ store('fp-studio-v1', S); }
+function save(){ store('fp-studio-v2', S); }
 
 /* ================= coding ================= */
 function heuristicCode(text){
@@ -525,187 +598,6 @@ function metrics(st){
     accepts: decided.filter(function(i){ return i.decision.kind==='accept'; }).length };
 }
 
-/* ================= render: student ================= */
-function codeChip(c){ var k = CODES[c] || CODES.OTHER; return '<span class="code" style="--cc:' + k.color + '" title="' + esc(k.name + ' · ICAP: ' + k.icap) + '">' + esc(c) + '</span>'; }
-function stepper(){
-  var names = ['Draft','Feedback dialogue','Revise','Analyse','Reflect & submit'];
-  return '<nav class="stepper" aria-label="Progress">' + names.map(function(n,i){ var k=i+1, cls = k<S.step?'done':(k===S.step?'cur':''); return '<span class="step ' + cls + '"><b>' + k + '</b>' + n + '</span>'; }).join('') + '</nav>';
-}
-function draftPanel(){
-  var sents = sentences(S.step>=3 ? S.revision : S.draft);
-  var openItem = itemById(S.open);
-  if (S.step === 1){
-    return '<div class="panel"><div class="ph"><h2>Your draft</h2><span class="wc">' + words(S.draft) + ' words</span></div>'
-      + '<div class="task"><span class="eyebrow">Task</span><br>' + esc(S.task) + '</div>'
-      + '<label class="small muted" for="draft">Write or paste your paragraph. A sample draft is loaded so you can try the flow.</label>'
-      + '<textarea id="draft" data-bind="draft">' + esc(S.draft) + '</textarea>'
-      + '<div class="row"><button class="btn" data-act="start" ' + (words(S.draft)<15?'disabled':'') + '>Get peer &amp; AI feedback →</button><button class="btn ghost" data-act="sample">Load sample draft</button></div></div>';
-  }
-  if (S.step === 2){
-    return '<div class="panel"><div class="ph"><h2>Your draft</h2><span class="small muted">Locked while you discuss feedback</span></div>'
-      + '<div class="sentences">' + sentences(S.draft).map(function(s){ var hl = openItem && jac(s, openItem.anchor)>0.6 ? ' hl-' + openItem.source : ''; return '<div class="sent' + hl + '">' + esc(s) + '</div>'; }).join('') + '</div>'
-      + '<div class="row"><button class="btn" data-act="to-revise">Start revising →</button><span class="small muted">You can revise any time. Decisions on each comment are up to you.</span></div></div>';
-  }
-  return '<div class="panel"><div class="ph"><h2>' + (S.step===3?'Revise':'Your revision') + '</h2><span class="wc">' + words(S.revision) + ' words</span></div>'
-    + (S.step===3 ? '<p class="small muted">Edit in your own words. The ownership meter on the right updates as you type.</p><textarea id="revision" data-bind="revision">' + esc(S.revision) + '</textarea><div class="row"><button class="btn" data-act="analyse">Analyse my revision →</button><button class="btn ghost" data-act="back-dialogue">Back to feedback</button></div>'
-      : '<div class="sentences">' + sents.map(function(s){ return '<div class="sent">' + esc(s) + '</div>'; }).join('') + '</div>' + (S.step===4?'<div class="row"><button class="btn ghost" data-act="back-revise">Edit revision</button></div>':''))
-    + '</div>';
-}
-function itemCard(it){
-  var open = S.open === it.id;
-  var dec = it.decision ? '<span class="badge ' + {accept:'acc',reject:'rej',adapt:'adp'}[it.decision.kind] + '">' + it.decision.kind + '</span>' : '<span class="badge">undecided</span>';
-  var h = '<div class="item' + (open?' open':'') + '">'
-    + '<button class="ihead" data-act="toggle" data-id="' + it.id + '" aria-expanded="' + open + '"><span class="src ' + it.source + '">' + (it.source==='ai'?'AI coach':'Peer') + '</span><span><span class="t">' + esc(it.text) + '</span><div class="meta">' + esc(TYPES[it.type]||it.type) + ' · on “' + esc(it.anchor.slice(0,60)) + (it.anchor.length>60?'…':'') + '”</div></span>' + dec + '</button>';
-  if (!open) return h + '</div>';
-  h += '<div class="ibody"><div class="thread">';
-  it.thread.slice(1).forEach(function(t, k){
-    var idx = k+1;
-    if (t.who==='student'){
-      h += '<div class="turn student"><span class="who">You' + (t.help?' · ' + (t.help==='executive'?'asked for the answer':(t.help==='done'?'took control':'asked for help')):'') + '</span><div class="bubble">' + esc(t.text) + '</div>';
-      if (t.help) h += '<div class="coded"><span class="chip ' + (t.help==='executive'?'warn':'own') + '">' + {executive:'help-seeking · executive',instrumental:'help-seeking · instrumental',example:'help-seeking · instrumental',done:'student takes control'}[t.help] + '</span></div>';
-      else if (t.code) h += '<div class="coded">' + codeChip(t.code) + (t.evidence && t.evidence!==t.text ? '<span class="ev">“' + esc(t.evidence) + '”</span>' : '') + (t.accurate===false?'<span class="chip warn">reasoning off-target</span>':(t.accurate===true?'<span class="chip own">reasoning on-target</span>':'')) + '<span class="small muted">' + (t.by==='llm'?'LLM-coded':'rule-coded') + '</span></div>';
-      else h += '<div class="coded"><span class="typing"><i></i><i></i><i></i></span></div>';
-      h += '</div>';
-    } else {
-      h += '<div class="turn ' + t.who + '"><span class="who">' + (t.who==='ai'?'AI coach':'Peer') + '</span><div class="bubble">' + esc(t.text) + '</div>'
-        + (t.why ? '<div class="why"><span class="lv">' + esc(LEVELS[t.level]) + '</span><span>' + esc(t.why) + '</span></div>' : '') + '</div>';
-    }
-  });
-  if (S.busy) h += '<div class="turn ai"><span class="who">AI coach</span><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>';
-  h += '</div>';
-  if (S.step <= 3){
-    h += '<div class="compose"><label class="small muted" for="reply-' + it.id + '">' + (it.source==='peer' ? 'Reply to your classmate (coded the same way as AI dialogue)' : 'Reply in your own words: agree, question, or push back') + '</label>'
-      + '<textarea id="reply-' + it.id + '" data-reply="' + it.id + '" placeholder="e.g., The survey is about teachers, so…"></textarea>'
-      + '<div class="row"><button class="btn" data-act="send" data-id="' + it.id + '" ' + (S.busy?'disabled':'') + '>Send</button>'
-      + (it.source==='ai' && !S.paused ? '<div class="helps"><button class="help" data-act="help" data-kind="instrumental" data-id="' + it.id + '">Give me a hint <small>· understand</small></button><button class="help" data-act="help" data-kind="example" data-id="' + it.id + '">Show an example</button><button class="help" data-act="help" data-kind="executive" data-id="' + it.id + '">Just tell me the answer</button><button class="help" data-act="help" data-kind="done" data-id="' + it.id + '">I\'ve got it</button></div>' : '')
-      + '</div></div>';
-    h += '<div class="decide"><span class="mini-title">Your decision on this comment</span><div class="opts">'
-      + ['accept','adapt','reject'].map(function(k){ return '<button class="opt" data-act="decide" data-kind="' + k + '" data-id="' + it.id + '" aria-pressed="' + (it.decision&&it.decision.kind===k) + '">' + {accept:'Accept',adapt:'Adapt my way',reject:'Reject'}[k] + '</button>'; }).join('')
-      + '</div>' + (it.decision ? '<input type="text" data-reason="' + it.id + '" placeholder="Why? (required for reject, helpful for all)" value="' + esc(it.decision.reason||'') + '">' : '') + '</div>';
-  }
-  return h + '</div></div>';
-}
-function feedbackPanel(){
-  if (S.step === 1) return '<div class="panel tint"><div class="ph"><h2>Feedback dialogue</h2></div><p class="muted small">After you submit your draft, you get feedback from a classmate and from an AI coach. You respond to each comment, ask for the kind of help you want, and decide what to do. Every reply is coded for engagement, and the AI\'s next move is chosen by an explicit policy you can inspect.</p>'
-    + '<div class="principles"><span class="mini-title">How the coach works</span><ul><li>Asks before it tells: no rewriting unless you ask repeatedly.</li><li>You choose: accept, adapt or reject every comment.</li><li>Support fades as you explain your revisions accurately.</li><li>Every decision is shown with the reason behind it.</li></ul></div></div>';
-  if (S.busy && !S.items.length) return '<div class="panel tint"><div class="ph"><h2>Feedback dialogue</h2></div><p class="muted"><span class="typing"><i></i><i></i><i></i></span> Reading your draft…</p></div>';
-  var lane = S.lane, shown = S.items.filter(function(i){ return lane==='all' || i.source===lane; });
-  var sents = sentences(S.draft);
-  var h = '<div class="panel tint"><div class="ph"><h2>Feedback dialogue</h2><div class="lanes">'
-    + ['all','peer','ai'].map(function(l){ return '<button class="lanebtn" data-act="lane" data-lane="' + l + '" aria-pressed="' + (lane===l) + '">' + {all:'All',peer:'Peer',ai:'AI coach'}[l] + ' (' + S.items.filter(function(i){ return l==='all'||i.source===l; }).length + ')</button>'; }).join('') + '</div></div>';
-  h += shown.map(itemCard).join('');
-  if (S.step <= 3) h += '<details><summary class="small muted" style="cursor:pointer">Add a comment from a classmate</summary><div class="compose" style="margin-top:8px"><select id="peer-anchor" aria-label="Sentence the comment is about">' + sents.map(function(s,i){ return '<option value="' + i + '">' + esc(s.slice(0,70)) + '</option>'; }).join('') + '</select><textarea data-bind="peerDraft" placeholder="Paste your classmate\'s comment">' + esc(S.peerDraft||'') + '</textarea><button class="btn line" data-act="add-peer">Add peer comment</button></div></details>';
-  return h + '</div>';
-}
-function sparkline(trail, w, h){
-  w = w||260; h = h||70; if (!trail.length) return '<p class="small muted">Support level appears here as the dialogue goes on.</p>';
-  var n = trail.length, x = function(i){ return 22 + (n===1?0:i*(w-30)/(n-1)); }, y = function(l){ return 8 + (5-l)*(h-18)/5; };
-  var pts = trail.map(function(l,i){ return x(i)+','+y(l); }).join(' ');
-  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Support level over turns: ' + trail.join(', ') + '"><text x="0" y="' + (y(5)+3) + '" font-size="9" fill="var(--muted)">L5</text><text x="0" y="' + (y(0)+3) + '" font-size="9" fill="var(--muted)">L0</text><line x1="20" x2="' + w + '" y1="' + y(0) + '" y2="' + y(0) + '" stroke="var(--line)"/><polyline points="' + pts + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + x(n-1) + '" cy="' + y(trail[n-1]) + '" r="4" fill="var(--accent)"/></svg>';
-}
-function codeStack(counts){
-  var keys = Object.keys(CODES), tot = keys.reduce(function(a,k){ return a+(counts[k]||0); },0);
-  if (!tot) return '<div class="stack"></div>';
-  return '<div class="stack">' + keys.map(function(k){ var v = counts[k]||0; return v ? '<i style="width:' + (100*v/tot) + '%; background:' + CODES[k].color + '" title="' + k + ': ' + v + '"></i>' : ''; }).join('') + '</div>';
-}
-function ownershipLive(){
-  if (S.step < 3) return null;
-  var al = alignDrafts(S.draft, S.revision), nt=0, at=0;
-  al.pairs.forEach(function(p){ if (p.kind==='same' || p.b<0) return; var s = al.B[p.b], ap = appropriation(s, p.a>-1?al.A[p.a]:''); var w = words(s); nt+=w; at+=w*ap.share; });
-  return nt ? Math.round(100*(1-at/nt)) : 100;
-}
-function agencyPanel(){
-  var M = metrics(S), own = S.analysis && S.step>=4 ? S.analysis.own : ownershipLive();
-  var h = '<aside class="panel agency" aria-label="Agency panel"><div class="ph"><h2>Your agency</h2><span class="small muted">Who is doing the thinking</span></div>';
-  h += '<div class="meter"><div class="kv"><span>Your own words in changes</span><b id="own-val">' + (own==null?'—':own+'%') + '</b></div><div class="bar"><i id="own-bar" style="width:' + (own==null?0:own) + '%"></i></div><span class="small muted">Share of new or changed text not copied from AI messages.</span></div>';
-  h += '<div class="kv"><span>Decisions made</span><b>' + M.decided + ' / ' + M.total + '</b></div>';
-  h += '<div class="kv"><span>…with a reason</span><b>' + M.withReason + '</b></div>';
-  h += '<div class="kv"><span>Help asked to understand</span><b>' + M.help.instrumental + '</b></div>';
-  h += '<div class="kv"><span>Help asked for the answer</span><b>' + M.help.executive + '</b></div>';
-  h += '<div><span class="mini-title">AI support level over time</span>' + sparkline(M.trail) + '</div>';
-  h += '<div class="codebars"><span class="mini-title">Your engagement: peer vs AI</span><div class="cbrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="cbrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div><div class="legend">' + Object.keys(CODES).map(function(k){ return '<span style="--lc:' + CODES[k].color + '">' + k + '</span>'; }).join('') + '</div></div>';
-  h += '<div class="ctl"><span class="mini-title">Control the coach</span><div class="seg" role="group" aria-label="Coach style">' + ['questions','hints','explain'].map(function(k){ return '<button data-act="style" data-style="' + k + '" aria-pressed="' + (S.style===k) + '">' + {questions:'Ask me questions',hints:'Give hints',explain:'Explain'}[k] + '</button>'; }).join('') + '</div><label class="switch" for="pause"><span>Pause the AI coach</span><input type="checkbox" id="pause" ' + (S.paused?'checked':'') + '></label><span class="small muted">Style changes wording only. The policy still decides how much help to give.</span></div>';
-  h += '<button class="btn ghost" data-act="reset" style="justify-self:start">Start over</button>';
-  return h + '</aside>';
-}
-function analysisPanel(){
-  var A = S.analysis; if (!A) return '';
-  var h = '<div class="panel"><div class="ph"><h2>Feedback → revision</h2><span class="small muted">' + (S.busy?'<span class="typing"><i></i><i></i><i></i></span> LLM judging improvement…':(A.by==='llm'?'Alignment + LLM rubric judgement':'Rule-based alignment (offline)')) + '</span></div>';
-  h += '<div class="diff">' + A.pairs.map(function(p){
-    if (p.kind==='same') return '';
-    var body = p.kind==='modified' ? wordDiff(A.A[p.a], A.B[p.b]) : (p.kind==='added' ? '<ins>' + esc(A.B[p.b]) + '</ins>' : '<del>' + esc(A.A[p.a]) + '</del>');
-    var chips = p.app ? '<span class="chip ' + (p.app.kind==='own'?'own':'ai') + '">' + {own:'own words',adapted:'adapted from AI',verbatim:'verbatim from AI'}[p.app.kind] + '</span>' : '';
-    return '<div class="drow"><span class="k">' + p.kind + '</span><div>' + body + '<div class="chips">' + chips + '</div></div></div>';
-  }).join('') + '</div>';
-  if (!A.pairs.some(function(p){ return p.kind!=='same'; })) h += '<p class="notice">No changes yet. Go back and revise, or keep your draft and explain why in the reflection.</p>';
-  h += '<span class="mini-title">Feedback journeys</span><div class="journey">' + S.items.map(journeyCard).join('') + '</div>';
-  if (A.selfInitiated && A.selfInitiated.length) h += '<div><span class="mini-title">Self-initiated changes</span><ul class="small">' + A.selfInitiated.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') + '</ul></div>';
-  h += '<div class="row"><button class="btn" data-act="to-reflect" ' + (S.busy?'disabled':'') + '>Reflect &amp; submit →</button></div>';
-  return h + '</div>';
-}
-function journeyCard(it){
-  var q = quadrant(it), talk = lastStudentCode(it), al = it.align || {};
-  var st = [['Given',true],['Discussed',!!talk],['Decided',!!it.decision],['Revised',/addressed|revised/.test(al.status||'') && !/^not/.test(al.status||'')],['Improved',al.improved==='yes']];
-  return '<div class="jcard"><div class="row" style="justify-content:space-between"><span><span class="src ' + it.source + '">' + (it.source==='ai'?'AI':'Peer') + '</span> <b class="small">' + esc(TYPES[it.type]||it.type) + '</b></span><span class="quad" style="color:' + {good:'var(--ins)',warn:'var(--warn)',eval:'var(--c-eval)',other:'var(--muted)'}[q.tone] + '">' + esc(q.label) + '</span></div>'
-    + '<div class="jsteps">' + st.map(function(s,i){ return (i?'<em>→</em>':'') + '<span class="' + (s[1]?'on':'') + '">' + s[0] + '</span>'; }).join('') + '</div>'
-    + '<div class="small muted">' + (talk ? 'Talk: ' + codeChip(talk) + ' ' : '') + (it.decision ? ' · Decision: <b>' + it.decision.kind + '</b>' + (it.decision.reason?' “' + esc(it.decision.reason) + '”':'') : '') + (al.status ? ' · ' + esc(al.status) + (al.improved && al.improved!=='unclear' ? ', improved: ' + esc(al.improved) : '') : '') + (al.app && al.app!=='own' ? ' · <span class="chip ai">' + esc(al.app) + ' AI wording</span>' : '') + '</div>'
-    + (al.note ? '<div class="small">' + esc(al.note) + '</div>' : '') + '</div>';
-}
-function reflectPanel(){
-  var h = '<div class="panel"><div class="ph"><h2>Reflect &amp; submit</h2></div><div class="reflect">'
-    + '<label for="r1">What did you change, and why?</label><textarea id="r1" data-refl="changed">' + esc(S.reflection.changed) + '</textarea>'
-    + '<label for="r2">What did you decide not to change, and why?</label><textarea id="r2" data-refl="kept">' + esc(S.reflection.kept) + '</textarea>'
-    + '<label for="r3">How did the peer and the AI help you differently?</label><textarea id="r3" data-refl="ai">' + esc(S.reflection.ai) + '</textarea></div>';
-  if (S.submitted) h += '<p class="ok">Submitted ' + new Date(S.submitted).toLocaleString() + '. Your teacher can now see your feedback journeys.</p>';
-  else if (!db) h += '<p class="notice">Saving to the class needs you to be signed in with access to this page. Your work stays in this browser either way.</p>';
-  h += '<div class="row"><button class="btn" data-act="submit" ' + (!db?'disabled':'') + '>Submit to my teacher</button><button class="btn ghost" data-act="back-analyse">Back</button></div>';
-  return h + '</div>';
-}
-function renderStudent(){
-  var root = $('#student'); if (!root) return;
-  var focus = document.activeElement, fid = focus && (focus.id || (focus.dataset && focus.dataset.reply && 'reply-'+focus.dataset.reply)), sel = focus && focus.selectionStart;
-  var middle = S.step >= 4 ? (S.step===4 ? analysisPanel() : reflectPanel()) : feedbackPanel();
-  root.innerHTML = stepper() + '<div class="studio">' + draftPanel() + middle + agencyPanel() + '</div>';
-  if (fid){ var el = document.getElementById(fid); if (el){ el.focus(); try{ if (sel!=null) el.setSelectionRange(sel, sel); }catch(e){} } }
-}
-
-/* ================= events: student ================= */
-document.addEventListener('input', function(e){
-  var t = e.target;
-  if (t.dataset.bind){ S[t.dataset.bind] = t.value; save();
-    if (t.dataset.bind==='draft'){ var b = $('[data-act="start"]'); if (b) b.disabled = words(t.value)<15; var wc = t.closest('.panel').querySelector('.wc'); if (wc) wc.textContent = words(t.value) + ' words'; }
-    if (t.dataset.bind==='revision'){ var o = ownershipLive(); $('#own-val').textContent = o+'%'; $('#own-bar').style.width = o+'%'; var wc2 = t.closest('.panel').querySelector('.wc'); if (wc2) wc2.textContent = words(t.value) + ' words'; }
-  }
-  if (t.dataset.reason){ var it = itemById(t.dataset.reason); if (it && it.decision){ it.decision.reason = t.value; save(); } }
-  if (t.dataset.refl){ S.reflection[t.dataset.refl] = t.value; save(); }
-});
-document.addEventListener('change', function(e){ if (e.target.id==='pause'){ S.paused = e.target.checked; save(); renderStudent(); } });
-document.addEventListener('keydown', function(e){ if (e.target.dataset && e.target.dataset.reply && e.key==='Enter' && (e.metaKey||e.ctrlKey)){ e.preventDefault(); sendTurn(e.target.dataset.reply, e.target.value); } });
-document.addEventListener('click', function(e){
-  var b = e.target.closest('[data-act]'); if (!b) return;
-  var a = b.dataset.act, id = b.dataset.id;
-  if (a==='tabview') return;
-  if (a==='start') startFeedback();
-  else if (a==='sample'){ S.draft = SAMPLE; save(); renderStudent(); }
-  else if (a==='toggle'){ S.open = S.open===id?null:id; save(); renderStudent(); }
-  else if (a==='lane'){ S.lane = b.dataset.lane; save(); renderStudent(); }
-  else if (a==='send'){ var ta = document.querySelector('[data-reply="' + id + '"]'); sendTurn(id, ta?ta.value:''); }
-  else if (a==='help') sendTurn(id, '', b.dataset.kind);
-  else if (a==='decide'){ var it = itemById(id); it.decision = {kind:b.dataset.kind, reason:(it.decision&&it.decision.reason)||'', at:Date.now()}; save(); renderStudent(); var inp = document.querySelector('[data-reason="' + id + '"]'); if (inp) inp.focus(); }
-  else if (a==='add-peer') addPeer();
-  else if (a==='to-revise'){ S.step = 3; if (!S.revision) S.revision = S.draft; save(); renderStudent(); }
-  else if (a==='back-dialogue'){ S.step = 2; save(); renderStudent(); }
-  else if (a==='analyse') analyse();
-  else if (a==='back-revise'){ S.step = 3; save(); renderStudent(); }
-  else if (a==='to-reflect'){ S.step = 5; save(); renderStudent(); }
-  else if (a==='back-analyse'){ S.step = 4; save(); renderStudent(); }
-  else if (a==='style'){ S.style = b.dataset.style; save(); renderStudent(); }
-  else if (a==='reset'){ if (b.dataset.confirm==='1'){ S = fresh(); save(); renderStudent(); } else { b.dataset.confirm='1'; b.textContent='Click again to clear everything'; setTimeout(function(){ if (b.isConnected){ b.dataset.confirm=''; b.textContent='Start over'; } }, 3000); } }
-  else if (a==='submit') submit();
-  else if (a==='pick-student'){ T.sel = id; renderTeacher(); }
-  else if (a==='src'){ T.src = b.dataset.src; T.sel = null; renderTeacher(); }
-});
-
 /* ================= persistence ================= */
 function packSession(){
   return { id: S.sessionId || (S.sessionId = uid()), savedAt: Date.now(), task:S.task, draft:S.draft, revision:S.revision, style:S.style,
@@ -722,9 +614,7 @@ function submit(){
   }).then(function(){ S.submitted = Date.now(); save(); renderStudent(); })
     .catch(function(err){ alertInline('Could not submit: ' + (err && err.message ? err.message : 'no write access') + '. Ask your teacher for Contributor access.'); });
 }
-function alertInline(msg){ var p = document.createElement('p'); p.className='notice'; p.textContent = msg; var panel = document.querySelector('#student .reflect') || document.querySelector('#student .panel'); if (panel) panel.after(p); setTimeout(function(){ p.remove(); }, 6000); }
-
-/* ================= teacher ================= */
+/* ================= teacher data ================= */
 var T = { src:'demo', sel:null, live:[], liveErr:null };
 function subscribeSessions(){
   var timer = setTimeout(function(){ T.liveErr = T.liveErr || 'timeout'; renderTeacher(); }, 10000);
@@ -763,67 +653,371 @@ function flagsFor(st){
   if (mis) f.push({t:mis + ' possible misconception' + (mis>1?'s':''), s:'Revisit the concept behind that feedback type.'});
   return f;
 }
-function renderTeacher(){
-  var root = $('#teacher'); if (!root) return;
-  var rows = classRows();
-  var h = '<div class="srcsel" style="padding-top:16px"><span class="mini-title">Data</span><button class="lanebtn" data-act="src" data-src="demo" aria-pressed="' + (T.src==='demo') + '">Demo class</button><button class="lanebtn" data-act="src" data-src="live" aria-pressed="' + (T.src==='live') + '">Submitted sessions (' + T.live.length + ')</button>' + (T.src==='demo' ? '<span class="demo-tag">Illustrative example data</span>' : '') + '</div>';
-  if (T.src==='live' && !rows.length){
-    var why = !db ? 'Sign in to see submitted sessions.' : (!me.canEdit ? 'Only the teacher (owner or editors of this page) can see the class. Students see only their own work.' : (T.liveErr==='timeout' ? 'Still loading… check your connection.' : 'No submissions yet. Share this page with students as Contributors; their sessions appear here when they submit.'));
-    root.innerHTML = h + '<div class="panel" style="margin-block:14px 40px"><p class="muted">' + esc(why) + '</p></div>'; return;
+function ownershipLive(){
+  if (S.step < 3) return null;
+  var al = alignDrafts(S.draft, S.revision), nt=0, at=0;
+  al.pairs.forEach(function(p){ if (p.kind==='same' || p.b<0) return; var s = al.B[p.b], ap = appropriation(s, p.a>-1?al.A[p.a]:''); var w = words(s); nt+=w; at+=w*ap.share; });
+  return nt ? Math.round(100*(1-at/nt)) : 100;
+}
+
+
+/* ================= UI ================= */
+var VIEW = 'student', UI = { drawer:false, pop:false, addPeer:false, confirmReset:false };
+var SIG = {ACK:'Accepted without explaining', DIFF:'Asked for clarity', REASON:'Explained reasoning', EVAL:'Weighed it critically', TRANSFER:'Applied it elsewhere', OTHER:'Other'};
+var SHORT = {ACK:'Accepted', DIFF:'Asked for clarity', REASON:'Explained', EVAL:'Evaluated', TRANSFER:'Transferred', OTHER:'Other'};
+var STEPS = ['Draft','Discuss','Revise','Review','Submit'];
+var ICON = {
+  arrow:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  up:'<svg class="i" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+  check:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>',
+  gear:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  x:'<svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  left:'<svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  doc:'<svg class="i" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>',
+  chat:'<svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  hand:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3v10M8 7l4-4 4 4M5 21h14"/></svg>',
+  pulse:'<svg class="i" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>',
+  info:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>'
+};
+function toast(msg){ var t = document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); t.textContent = msg; document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3800); }
+function alertInline(msg){ toast(msg); }
+function srcName(it){ return it.source==='ai' ? 'AI coach' : (it.peerName || 'Mina · classmate'); }
+function avatar(src, it){ return src==='ai' ? '<span class="av ai" aria-hidden="true">AI</span>' : '<span class="av peer" aria-hidden="true">' + (it && it.peerName ? it.peerName[0] : 'M') + '</span>'; }
+function grow(el){ if (!el) return; el.style.height='auto'; el.style.height = el.scrollHeight + 'px'; }
+function ringSvg(p){ var r=7, c=2*Math.PI*r, v = p==null?0:p; return '<svg class="ring" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="'+r+'" fill="none" stroke="var(--line-2)" stroke-width="2.5"/><circle cx="9" cy="9" r="'+r+'" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="'+(c*v/100)+' '+c+'" transform="rotate(-90 9 9)"/></svg>'; }
+function decidedCount(){ return S.items.filter(function(i){ return i.decision; }).length; }
+
+/* ---------- top bar ---------- */
+function renderTop(){
+  var st = $('#steps'), ac = $('#actions');
+  if (VIEW === 'student'){
+    st.innerHTML = STEPS.map(function(n,i){ var k=i+1, cls = k<S.step?'done':(k===S.step?'cur':''), can = k<S.step && k>=2 && k!==1;
+      var inner = '<span class="n">' + (k<S.step?'✓':k) + '</span><span class="lbl">' + n + '</span>';
+      return '<li>' + (can ? '<button class="stp '+cls+'" data-act="goto" data-step="'+k+'">'+inner+'</button>' : '<span class="stp '+cls+'"' + (k===S.step?' aria-current="step"':'') + '>'+inner+'</span>') + '</li>'; }).join('');
+    st.hidden = false;
+  } else { st.innerHTML = ''; st.hidden = true; }
+  var own = S.analysis && S.step>=4 ? S.analysis.own : (S.step>=3 ? ownershipLive() : null);
+  ac.innerHTML = '<span class="status" title="' + (sample?'Replies are coded and phrased by Claude':'Replies are coded with keyword rules') + '"><span class="dot' + (sample?' on':'') + '" id="ai-dot"></span><span id="ai-label"></span></span>'
+    + (VIEW==='student' ? '<button class="iconbtn" data-act="open-drawer" aria-haspopup="dialog" aria-label="Insights">' + ringSvg(own) + '<span class="ibl">Insights</span></button>'
+      + '<div class="relative"><button class="iconbtn" data-act="toggle-pop" aria-label="Coach settings" aria-expanded="' + UI.pop + '">' + ICON.gear + '</button>' + (UI.pop ? settingsPop() : '') + '</div>' : '')
+    + '<div class="role" role="group" aria-label="View"><button data-act="view" data-view="student" aria-pressed="' + (VIEW==='student') + '">Student</button><button data-act="view" data-view="teacher" aria-pressed="' + (VIEW==='teacher') + '">Teacher</button></div>';
+  setStatus();
+}
+function settingsPop(){
+  return '<div class="pop" role="dialog" aria-label="Coach settings"><div><h3>Coach style</h3><div class="seg" style="margin-top:8px">' + ['questions','hints','explain'].map(function(k){ return '<button data-act="style" data-style="'+k+'" aria-pressed="'+(S.style===k)+'">' + {questions:'Questions',hints:'Hints',explain:'Explain'}[k] + '</button>'; }).join('') + '</div><p class="muted" style="font-size:12px; margin-top:6px">Changes wording only. The policy still decides how much help to give.</p></div>'
+    + '<div class="toggle"><span>Pause the AI coach</span><label class="switch"><input type="checkbox" id="pause" ' + (S.paused?'checked':'') + ' aria-label="Pause the AI coach"><span></span></label></div>'
+    + '<button class="btn quiet sm danger" data-act="reset" style="justify-self:start; padding:0">' + (UI.confirmReset ? 'Click again to clear everything' : 'Start over') + '</button></div>';
+}
+
+/* ---------- student: stage header ---------- */
+function stageHead(){
+  var d = decidedCount(), n = S.items.length;
+  var H = {
+    1:['Write your draft', 'Write a short argumentative paragraph. When you are ready, a classmate and the AI coach will comment on it.', '<button class="btn quiet" data-act="sample">Use sample draft</button><button class="btn primary" data-act="start" ' + (words(S.draft)<15?'disabled':'') + '>Get feedback ' + ICON.arrow + '</button>'],
+    2:['Discuss the feedback', 'Reply to each comment, ask for the kind of help you want, and decide what to do with it.' + (n ? ' <b style="color:var(--ink)">' + d + ' of ' + n + ' decided.</b>' : ''), '<button class="btn primary" data-act="to-revise">Start revising ' + ICON.arrow + '</button>'],
+    3:['Revise in your own words', 'Edit your paragraph. Your comments stay in the margin so you can keep discussing them.', '<button class="btn quiet" data-act="goto" data-step="2">Back</button><button class="btn primary" data-act="analyse">Review changes ' + ICON.arrow + '</button>'],
+    4:['See how feedback shaped your revision', 'Every change is matched to the comment it answers, and checked for whose words it uses.', '<button class="btn quiet" data-act="goto" data-step="3">Edit revision</button><button class="btn primary" data-act="to-reflect" ' + (S.busy?'disabled':'') + '>Reflect &amp; submit ' + ICON.arrow + '</button>'],
+    5:['Reflect and submit', 'Three short questions, then send your work to your teacher.', '<button class="btn quiet" data-act="goto" data-step="4">Back</button><button class="btn primary" data-act="submit" ' + (!db||S.submitted?'disabled':'') + '>' + (S.submitted?'Submitted':'Submit to teacher') + '</button>']
+  }[S.step];
+  return '<div class="stagehead"><div><h1>' + H[0] + '</h1><p>' + H[1] + '</p></div><div class="btns">' + H[2] + '</div></div>';
+}
+
+/* ---------- student: document ---------- */
+function assignment(){ return '<div class="assign">' + ICON.doc + '<span><b>Assignment.</b> ' + esc(S.task) + '</span></div>'; }
+function docView(){
+  var foot = function(txt, right){ return '<div class="doc-foot"><span>' + txt + '</span><span>' + (right||'') + '</span></div>'; };
+  if (S.step === 1) return '<article class="doc">' + assignment() + '<label class="sr" for="draft">Your draft</label><textarea id="draft" class="doc-edit" data-bind="draft" placeholder="Start writing your paragraph…">' + esc(S.draft) + '</textarea>' + foot('<span id="wc">' + words(S.draft) + '</span> words', 'Target 120–180') + '</article>';
+  if (S.step === 2) return '<article class="doc">' + assignment() + '<div class="doc-text">' + anchoredText(S.draft) + '</div>' + foot('Underlined sentences have comments. Click one to open it.', '<span style="color:var(--peer)">━</span> classmate &nbsp; <span style="color:var(--ai)">━</span> AI coach') + '</article>';
+  if (S.step === 3) return '<article class="doc"><label class="sr" for="revision">Your revision</label><textarea id="revision" class="doc-edit" data-bind="revision">' + esc(S.revision) + '</textarea>' + foot('<span id="wc">' + words(S.revision) + '</span> words', '<span id="ownlive">' + (ownershipLive()) + '%</span> of your changes in your own words') + '</article>';
+  if (S.step === 4) return '<article class="doc"><div class="doc-title">Changes since your draft</div><div class="doc-text">' + diffText() + '</div>' + foot('<ins style="background:var(--ins-bg);color:var(--ins);text-decoration:none;padding:0 4px;border-radius:3px">added</ins> &nbsp; <del style="background:var(--del-bg);color:var(--del);padding:0 4px;border-radius:3px">removed</del>', S.analysis.by==='llm' ? 'Improvement judged against each comment' : 'Matched by text similarity') + '</article>';
+  return '<article class="doc"><div class="doc-title">Final paragraph</div><div class="doc-text">' + esc(S.revision) + '</div>' + foot(words(S.revision) + ' words', '') + '</article>';
+}
+function anchoredText(text){
+  var sents = sentences(text);
+  return sents.map(function(s){
+    var its = S.items.filter(function(it){ return jac(s, it.anchor) > 0.6; });
+    if (!its.length) return esc(s);
+    var it = its.filter(function(x){ return x.id===S.open; })[0] || its[0];
+    var c = it.source==='ai' ? 'var(--ai)' : 'var(--peer)', cs = it.source==='ai' ? 'var(--ai-soft)' : 'var(--peer-soft)';
+    return '<mark class="anc' + (its.some(function(x){ return x.id===S.open; })?' on':'') + '" style="--c:' + c + '; --cs:' + cs + '" data-act="open" data-id="' + it.id + '" tabindex="0" role="button" aria-label="Open comment on this sentence">' + esc(s) + '</mark>';
+  }).join(' ');
+}
+function diffRuns(a, b){
+  var x = a.split(/\s+/), y = b.split(/\s+/), n = x.length, m = y.length, L = [], i, j;
+  for (i=0;i<=n;i++) L.push(new Array(m+1).fill(0));
+  for (i=n-1;i>=0;i--) for (j=m-1;j>=0;j--) L[i][j] = x[i].toLowerCase()===y[j].toLowerCase() ? L[i+1][j+1]+1 : Math.max(L[i+1][j], L[i][j+1]);
+  var ops = []; i=0; j=0;
+  while (i<n && j<m){ if (x[i].toLowerCase()===y[j].toLowerCase()){ ops.push(['=',y[j]]); i++; j++; } else if (L[i+1][j]>=L[i][j+1]) ops.push(['-',x[i++]]); else ops.push(['+',y[j++]]); }
+  while (i<n) ops.push(['-',x[i++]]); while (j<m) ops.push(['+',y[j++]]);
+  var out = [], k = 0;
+  while (k < ops.length){
+    var kind = ops[k][0], run = [];
+    while (k < ops.length && ops[k][0]===kind){ run.push(ops[k][1]); k++; }
+    var txt = esc(run.join(' '));
+    out.push(kind==='=' ? txt : (kind==='+' ? '<ins>'+txt+'</ins>' : '<del>'+txt+'</del>'));
   }
+  return out.join(' ');
+}
+function diffText(){
+  var A = S.analysis, out = [];
+  var byB = {}; A.pairs.forEach(function(p){ if (p.b>-1) byB[p.b] = p; });
+  var dels = A.pairs.filter(function(p){ return p.kind==='deleted'; });
+  A.B.forEach(function(s, j){
+    var p = byB[j]; var tag = p && p.app && p.app.kind!=='own' ? '<span class="aitag">' + (p.app.kind==='verbatim'?'AI wording':'adapted from AI') + '</span>' : '';
+    if (!p || p.kind==='same') out.push(esc(s));
+    else if (p.kind==='modified') out.push(diffRuns(A.A[p.a], s) + tag);
+    else out.push('<ins>' + esc(s) + '</ins>' + tag);
+  });
+  dels.forEach(function(p){ out.push('<del>' + esc(A.A[p.a]) + '</del>'); });
+  return out.join(' ');
+}
+
+/* ---------- student: margin ---------- */
+function marginView(){
+  if (S.step === 1) return '<aside class="margin"><div class="empty"><h3>What happens next</h3>'
+    + '<div class="feat"><span class="ic">' + ICON.chat + '</span><span><b>Two kinds of feedback</b>A classmate and an AI coach comment on your draft.</span></div>'
+    + '<div class="feat"><span class="ic">' + ICON.hand + '</span><span><b>You stay in charge</b>Reply, ask for the help you want, and accept, adapt or reject each comment.</span></div>'
+    + '<div class="feat"><span class="ic">' + ICON.pulse + '</span><span><b>Support that steps back</b>The coach asks before it tells, and helps less as you explain more.</span></div></div></aside>';
+  if (S.busy && !S.items.length) return '<aside class="margin"><div class="empty"><span class="typing"><i></i><i></i><i></i></span><p class="muted">Reading your draft…</p></div></aside>';
+  if (S.step === 4) return reviewMargin();
+  if (S.step === 5) return reflectMargin();
+  var lane = S.lane || 'all', shown = S.items.filter(function(i){ return lane==='all' || i.source===lane; });
+  var h = '<aside class="margin"><div class="mhead"><h2>Comments</h2><div class="seg" role="group" aria-label="Filter comments">' + ['all','peer','ai'].map(function(l){ return '<button data-act="lane" data-lane="'+l+'" aria-pressed="'+(lane===l)+'">' + {all:'All',peer:'Classmate',ai:'AI coach'}[l] + '</button>'; }).join('') + '</div></div>';
+  h += shown.map(commentCard).join('');
+  if (UI.addPeer){
+    var sents = sentences(S.draft);
+    h += '<div class="addpeer"><label for="peer-anchor" style="font-size:12px;font-weight:600;color:var(--muted)">Which sentence is it about?</label><select id="peer-anchor">' + sents.map(function(s,i){ return '<option value="'+i+'">' + esc(s.slice(0,70)) + '</option>'; }).join('') + '</select><textarea data-bind="peerDraft" rows="3" placeholder="Paste your classmate\'s comment" aria-label="Classmate comment">' + esc(S.peerDraft||'') + '</textarea><div class="btns"><button class="btn primary sm" data-act="add-peer">Add comment</button><button class="btn quiet sm" data-act="toggle-addpeer">Cancel</button></div></div>';
+  } else h += '<button class="linkbtn" data-act="toggle-addpeer">+ Add a comment from a classmate</button>';
+  return h + '</aside>';
+}
+function commentCard(it){
+  var on = S.open === it.id, d = it.decision;
+  var h = '<div class="card' + (on?' on':'') + '" id="card-' + it.id + '"><button class="chead" data-act="open" data-id="' + it.id + '" aria-expanded="' + on + '">' + avatar(it.source, it)
+    + '<span class="cwho"><b>' + esc(srcName(it)) + '</b><span>' + esc(TYPES[it.type]||it.type) + '</span></span>'
+    + '<span class="pill ' + (d?d.kind:'') + '">' + (d ? {accept:'Accepted',adapt:'Adapted',reject:'Rejected'}[d.kind] : 'Open') + '</span></button>'
+    + '<div class="cbody"><p class="ctext">' + esc(it.text) + '</p>';
+  if (!on) return h + '</div></div>';
+  var turns = it.thread.slice(1);
+  if (turns.length || (S.busy && S.busyItem===it.id)){
+    h += '<div class="thread">';
+    turns.forEach(function(t){
+      if (t.who === 'student'){
+        h += '<div class="msg me"><span class="by">You</span><div class="bubble">' + esc(t.text) + '</div>';
+        if (t.help) h += '<span class="signal"><i style="--c:' + (t.help==='executive'?'var(--warn)':'var(--accent)') + '"></i>' + {executive:'Asked for the answer',instrumental:'Asked for a hint',example:'Asked for an example',done:'Took back control'}[t.help] + '</span>';
+        else if (t.code) h += '<span class="signal' + (t.accurate===false?' warn':'') + '"><i style="--c:' + CODES[t.code].color + '"></i>' + SIG[t.code] + (t.accurate===false ? ' · reasoning may be off-target' : '') + '</span>';
+        else h += '<span class="typing"><i></i><i></i><i></i></span>';
+        h += '</div>';
+      } else {
+        h += '<div class="msg ' + t.who + '"><span class="by">' + (t.who==='ai'?'AI coach':esc(srcName(it))) + '</span><div class="bubble">' + esc(t.text) + '</div>'
+          + (t.why ? '<details class="why"><summary>Why this response?</summary><p><code>' + esc(LEVELS[t.level]) + '</code><br>' + esc(t.why) + '</p></details>' : '') + '</div>';
+      }
+    });
+    if (S.busy && S.busyItem===it.id) h += '<div class="msg ai"><span class="by">AI coach</span><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div></div>';
+    h += '</div>';
+  }
+  if (S.step <= 3){
+    h += '<div class="composer"><label class="sr" for="reply-' + it.id + '">Reply</label><textarea id="reply-' + it.id + '" data-reply="' + it.id + '" rows="1" placeholder="' + (it.source==='peer'?'Reply to your classmate…':'Reply in your own words…') + '"></textarea><button class="send" data-act="send" data-id="' + it.id + '" aria-label="Send reply" ' + (S.busy?'disabled':'') + '>' + ICON.up + '</button></div>';
+    if (it.source==='ai' && !S.paused) h += '<div class="chips" aria-label="Ask for help">' + [['instrumental','Give me a hint'],['example','Show an example'],['executive','Just tell me'],['done','I\'ve got it']].map(function(c){ return '<button class="chip" data-act="help" data-kind="'+c[0]+'" data-id="'+it.id+'" ' + (S.busy?'disabled':'') + '>' + c[1] + '</button>'; }).join('') + '</div>';
+    if (it.source==='ai' && S.paused) h += '<p class="muted" style="font-size:12px">The AI coach is paused. Your replies are still saved.</p>';
+    h += '<div class="decide"><span class="lbl">What will you do with this comment?</span><div class="dseg" role="group" aria-label="Decision">' + [['accept','Accept'],['adapt','Adapt'],['reject','Reject']].map(function(k){ return '<button data-act="decide" data-kind="'+k[0]+'" data-id="'+it.id+'" aria-pressed="'+(d&&d.kind===k[0])+'">'+k[1]+'</button>'; }).join('') + '</div>'
+      + (d ? '<input class="reason" data-reason="' + it.id + '" id="reason-' + it.id + '" aria-label="Reason for your decision" placeholder="' + (d.kind==='reject'?'Why? (needed when you reject)':'Why? (optional)') + '" value="' + esc(d.reason||'') + '">' : '') + '</div>';
+  }
+  return h + '</div></div>';
+}
+function reviewMargin(){
+  var A = S.analysis, changed = A.pairs.filter(function(p){ return p.kind!=='same'; }).length;
+  var addressed = S.items.filter(function(it){ return it.align && !/^not/.test(it.align.status); }).length;
+  var h = '<aside class="margin"><div class="summary"><div><b>' + A.own + '%</b><span>own words in changes</span></div><div><b>' + changed + '</b><span>sentences changed</span></div><div><b>' + addressed + '/' + S.items.length + '</b><span>comments acted on</span></div></div>';
+  if (S.busy) h += '<p class="note"><span class="typing"><i></i><i></i><i></i></span> Checking whether each change improves the writing…</p>';
+  h += '<div class="mhead"><h2>Feedback journeys</h2></div>' + S.items.map(journeyCard).join('');
+  if (A.selfInitiated && A.selfInitiated.length) h += '<div class="jcard"><b style="font-size:13px">Changes you made on your own</b><ul style="margin:0; padding-left:18px; font-size:13px; color:var(--ink-2)">' + A.selfInitiated.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') + '</ul></div>';
+  if (!changed) h += '<p class="note">No changes yet. Go back and revise, or explain in your reflection why you kept the draft.</p>';
+  return h + '</aside>';
+}
+function journeyCard(it){
+  var q = quadrant(it), talk = lastStudentCode(it), al = it.align || {};
+  var steps = [true, !!talk, !!it.decision, /addressed|revised/.test(al.status||'') && !/^not/.test(al.status||''), al.improved==='yes'];
+  var bits = [];
+  if (talk) bits.push('You ' + SHORT[talk].toLowerCase().replace('accepted','accepted it'));
+  if (it.decision) bits.push(it.decision.kind + (it.decision.kind==='reject'?'ed':(it.decision.kind==='adapt'?'ed':'ed')));
+  if (al.app && al.app!=='own') bits.push('used ' + al.app + ' AI wording');
+  return '<div class="jcard"><div class="jtop">' + avatar(it.source, it) + '<span class="cwho"><b>' + esc(TYPES[it.type]||it.type) + '</b><span>' + esc(srcName(it)) + '</span></span><span class="verdict ' + q.tone + '">' + esc(q.label) + '</span></div>'
+    + '<div class="path">' + steps.map(function(s){ return '<span class="' + (s?'on':'') + '"></span>'; }).join('') + '</div><div class="pathlbl"><span>Given</span><span>Discussed</span><span>Decided</span><span>Revised</span><span>Improved</span></div>'
+    + (al.note ? '<p class="jnote">' + esc(al.note) + '</p>' : '') + '</div>';
+}
+function reflectMargin(){
+  var h = '<aside class="margin"><div class="reflect">'
+    + '<label>What did you change, and why?<textarea data-refl="changed" id="r1">' + esc(S.reflection.changed) + '</textarea></label>'
+    + '<label>What did you keep, and why?<textarea data-refl="kept" id="r2">' + esc(S.reflection.kept) + '</textarea></label>'
+    + '<label>How did your classmate and the AI help differently?<textarea data-refl="ai" id="r3">' + esc(S.reflection.ai) + '</textarea></label></div>';
+  if (S.submitted) h += '<p class="note ok">Submitted ' + new Date(S.submitted).toLocaleString() + '. Your teacher can see your feedback journeys.</p>';
+  else if (!db) h += '<p class="note">' + (window.claude ? 'Sign in with access to this page to submit to your class.' : 'This web demo does not submit to a class. Submitting works in the classroom version.') + ' Your work is saved in this browser.</p>';
+  return h + '</aside>';
+}
+
+/* ---------- insights drawer ---------- */
+function sparkline(trail, w, h){
+  w = w||340; h = h||90; if (!trail.length) return '<p class="muted" style="font-size:13px">Appears once the coach starts responding.</p>';
+  var n = trail.length, x = function(i){ return 26 + (n===1?0:i*(w-36)/(n-1)); }, y = function(l){ return 10 + (5-l)*(h-22)/5; };
+  var pts = trail.map(function(l,i){ return x(i)+','+y(l); }).join(' ');
+  var grid = [0,1,2,3,4,5].map(function(l){ return '<line x1="24" x2="' + w + '" y1="' + y(l) + '" y2="' + y(l) + '" stroke="var(--line)" stroke-width="1"/>'; }).join('');
+  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Support level over turns: ' + trail.join(', ') + '">' + grid + '<text x="0" y="' + (y(5)+4) + '" font-size="10" fill="var(--muted)">L5</text><text x="0" y="' + (y(0)+4) + '" font-size="10" fill="var(--muted)">L0</text><polyline points="' + pts + '" fill="none" stroke="var(--accent)" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + x(n-1) + '" cy="' + y(trail[n-1]) + '" r="4" fill="var(--accent)"/></svg>';
+}
+function codeStack(counts){
+  var keys = Object.keys(CODES), tot = keys.reduce(function(a,k){ return a+(counts[k]||0); },0);
+  if (!tot) return '<div class="stack"></div>';
+  return '<div class="stack">' + keys.map(function(k){ var v = counts[k]||0; return v ? '<i style="width:' + (100*v/tot) + '%; background:' + CODES[k].color + '" title="' + SHORT[k] + ': ' + v + '"></i>' : ''; }).join('') + '</div>';
+}
+function legend(){ return '<div class="legend">' + Object.keys(CODES).filter(function(k){ return k!=='OTHER'; }).map(function(k){ return '<span style="--c:' + CODES[k].color + '">' + SHORT[k] + '</span>'; }).join('') + '</div>'; }
+function renderDrawer(){
+  var dr = $('#drawer'), sc = $('#scrim');
+  dr.classList.toggle('open', UI.drawer); sc.classList.toggle('open', UI.drawer); dr.setAttribute('aria-hidden', UI.drawer?'false':'true');
+  if (!UI.drawer){ dr.innerHTML = ''; return; }
+  var M = metrics(S), own = S.analysis && S.step>=4 ? S.analysis.own : (S.step>=3 ? ownershipLive() : null);
+  var started = S.items.length > 0;
+  dr.innerHTML = '<div class="dhead"><h2>Your insights</h2><button class="iconbtn" data-act="close-drawer" aria-label="Close">' + ICON.x + '</button></div><div class="dbody">'
+    + (!started ? '<p class="note">Insights fill in as you discuss feedback and revise.</p>' : '')
+    + '<section class="dsec"><h3>Your words</h3><div class="big"><b>' + (own==null?'—':own+'%') + '</b><p>of new or changed text is in your own words, not copied from the AI coach.</p></div></section>'
+    + '<section class="dsec"><h3>Decisions</h3><div class="row2"><div class="stat"><b>' + M.decided + '<span style="font-size:14px;color:var(--muted);font-weight:500"> / ' + M.total + '</span></b><span>comments decided</span></div><div class="stat"><b>' + M.withReason + '</b><span>with a reason</span></div></div></section>'
+    + '<section class="dsec"><h3>Help you asked for</h3><div class="row2"><div class="stat"><b>' + M.help.instrumental + '</b><span>to understand</span></div><div class="stat"><b>' + M.help.executive + '</b><span>for the answer</span></div></div></section>'
+    + '<section class="dsec"><h3>Coach support over time</h3>' + sparkline(M.trail) + '<p class="muted" style="font-size:12.5px">A falling line means the coach is stepping back as you explain your thinking.</p></section>'
+    + '<section class="dsec"><h3>How you responded</h3><div class="bars"><div class="barrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="barrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div></div>' + legend() + '</section>'
+    + '</div>';
+}
+
+/* ---------- student render ---------- */
+function renderStudent(){
+  if (VIEW !== 'student'){ renderTop(); return; }
+  var main = $('#main');
+  var f = document.activeElement, fid = f && f.id, sel = f && f.selectionStart, scrollY = window.scrollY;
+  main.innerHTML = '<div class="stage">' + stageHead() + '<div class="workspace">' + docView() + marginView() + '</div></div>';
+  Array.prototype.forEach.call(main.querySelectorAll('textarea'), grow);
+  if (fid){ var el = document.getElementById(fid); if (el){ el.focus({preventScroll:true}); try{ if (sel!=null) el.setSelectionRange(sel, sel); }catch(e){} } }
+  window.scrollTo(0, scrollY);
+  renderTop(); renderDrawer();
+}
+
+/* ================= teacher ================= */
+function codeTag(c){ var k = CODES[c] || CODES.OTHER; return '<span class="codetag" style="--c:' + k.color + '"><i></i>' + SHORT[c] + ' <small>' + c + '</small></span>'; }
+function renderTeacher(){
+  if (VIEW !== 'teacher'){ return; }
+  var main = $('#main'), rows = classRows();
+  var side = '<nav class="side" aria-label="Class"><h3>Data</h3><div class="seg" style="margin:0 8px 8px; display:flex"><button style="flex:1" data-act="src" data-src="demo" aria-pressed="' + (T.src==='demo') + '">Demo class</button><button style="flex:1" data-act="src" data-src="live" aria-pressed="' + (T.src==='live') + '">Submitted (' + T.live.length + ')</button></div>'
+    + '<button class="navi" data-act="pick-student" data-id="" aria-current="' + (!T.sel) + '">' + ICON.pulse + 'Class overview</button><h3>Students</h3>'
+    + (rows.length ? rows.map(function(st){ var fl = flagsFor(st).length, M = metrics(st); return '<button class="navi" data-act="pick-student" data-id="' + esc(st.id) + '" aria-current="' + (T.sel===st.id) + '"><span class="av me" aria-hidden="true">' + esc((st._name||'S').replace('Student ','').slice(0,2)) + '</span>' + esc(st._name) + '<span class="meta">' + (M.own!=null?M.own+'%':'') + '<span class="sdot' + (fl?' warn':'') + '" title="' + (fl?fl+' flag(s)':'On track') + '"></span></span></button>'; }).join('') : '<p class="muted" style="padding:8px; font-size:13px">No students yet.</p>')
+    + '</nav>';
+  var body;
+  if (T.src==='live' && !rows.length){
+    var why = !db ? (window.claude ? 'Sign in to see submitted sessions.' : 'This web demo has no class data. Switch to the demo class to explore the dashboard.') : (!me.canEdit ? 'Only the teacher (owner or editors) can see the class. Students see only their own work.' : (T.liveErr==='timeout' ? 'Still loading…' : 'No submissions yet. Share this page with students as Contributors; their work appears here when they submit.'));
+    body = '<div class="panel"><h2>Submitted sessions</h2><p class="muted">' + esc(why) + '</p></div>';
+  } else {
+    var cur = T.sel ? rows.filter(function(st){ return st.id===T.sel; })[0] : null;
+    body = cur ? studentDetail(cur) : overview(rows);
+  }
+  main.innerHTML = '<div class="stage"><div class="stagehead"><div><h1>' + (T.sel ? 'Student detail' : 'Class overview') + '</h1><p>' + (T.sel ? 'Every judgement links back to what the student wrote. You can correct any code.' : 'Where students struggle with feedback, and who needs a conversation.') + '</p></div>' + (T.src==='demo' ? '<span class="demo">Illustrative example data</span>' : '') + '</div><div class="tlayout">' + side + '<div class="tmain">' + body + '</div></div></div>';
+  renderTop();
+}
+function overview(rows){
   var all = rows.map(function(st){ return {st:st, M:metrics(st)}; });
   var items = []; rows.forEach(function(st){ (st.items||[]).forEach(function(it){ items.push(it); }); });
-  var lostByType = {}, totByType = {};
-  items.forEach(function(it){ totByType[it.type] = (totByType[it.type]||0)+1; var q = quadrant(it).label; if (/Surface|misconception|Not engaged/.test(q) || (it.align && /^not/.test(it.align.status) && !(it.decision&&it.decision.kind==='reject'))) lostByType[it.type] = (lostByType[it.type]||0)+1; });
-  var codesAI = {}, codesPeer = {}, ins=0, exe=0, ownSum=0, ownN=0, reasoned=0, decided=0;
-  all.forEach(function(r){ Object.keys(r.M.codes.ai).forEach(function(k){ codesAI[k]=(codesAI[k]||0)+r.M.codes.ai[k]; }); Object.keys(r.M.codes.peer).forEach(function(k){ codesPeer[k]=(codesPeer[k]||0)+r.M.codes.peer[k]; }); ins+=r.M.help.instrumental; exe+=r.M.help.executive; if (r.M.own!=null){ ownSum+=r.M.own; ownN++; } reasoned += r.M.withReason; decided += r.M.decided; });
-  h += '<div class="tgrid"><div class="kpi"><span>Students</span><b>' + rows.length + '</b></div><div class="kpi"><span>Average own words in revisions</span><b>' + (ownN?Math.round(ownSum/ownN)+'%':'—') + '</b></div><div class="kpi"><span>Help to understand vs. for answers</span><b>' + ins + ' : ' + exe + '</b></div><div class="kpi"><span>Decisions with a reason</span><b>' + reasoned + ' / ' + decided + '</b></div></div>';
-  h += '<div class="tcols"><div class="panel"><div class="ph"><h2>Which feedback gets lost?</h2><span class="small muted">Not taken up, surface uptake, or misread</span></div>' + Object.keys(totByType).map(function(k){ var v = Math.round(100*(lostByType[k]||0)/totByType[k]); return '<div class="hbar"><span>' + esc(TYPES[k]||k) + '</span><span class="t"><i style="width:' + v + '%"></i></span><span class="v">' + v + '%</span></div>'; }).join('') + '<p class="small muted">Use the top row to plan a mini-lesson.</p></div>'
-    + '<div class="panel"><div class="ph"><h2>Engagement: peer vs AI</h2><span class="small muted">Coded student replies</span></div><div class="codebars"><div class="cbrow"><span>Peer</span>' + codeStack(codesPeer) + '</div><div class="cbrow"><span>AI</span>' + codeStack(codesAI) + '</div><div class="legend">' + Object.keys(CODES).map(function(k){ return '<span style="--lc:' + CODES[k].color + '">' + k + ' · ' + esc(CODES[k].name) + '</span>'; }).join('') + '</div></div></div></div>';
+  var lost = {}, tot = {};
+  items.forEach(function(it){ tot[it.type]=(tot[it.type]||0)+1; var q = quadrant(it).label; if (/Surface|misconception|Not engaged/.test(q) || (it.align && /^not/.test(it.align.status) && !(it.decision&&it.decision.kind==='reject'))) lost[it.type]=(lost[it.type]||0)+1; });
+  var cAI={}, cP={}, ins=0, exe=0, ownS=0, ownN=0, rs=0, dc=0;
+  all.forEach(function(r){ Object.keys(r.M.codes.ai).forEach(function(k){ cAI[k]=(cAI[k]||0)+r.M.codes.ai[k]; }); Object.keys(r.M.codes.peer).forEach(function(k){ cP[k]=(cP[k]||0)+r.M.codes.peer[k]; }); ins+=r.M.help.instrumental; exe+=r.M.help.executive; if (r.M.own!=null){ ownS+=r.M.own; ownN++; } rs+=r.M.withReason; dc+=r.M.decided; });
+  var bars = Object.keys(tot).map(function(k){ return {k:k, v:Math.round(100*(lost[k]||0)/tot[k])}; }).sort(function(a,b){ return b.v-a.v; });
   var flagged = all.map(function(r){ return {st:r.st, f:flagsFor(r.st)}; }).filter(function(x){ return x.f.length; });
-  h += '<div class="tcols3"><div class="panel"><div class="ph"><h2>Students</h2></div><div class="slist">' + all.map(function(r){ var f = flagsFor(r.st).length; return '<button class="sbtn" data-act="pick-student" data-id="' + esc(r.st.id) + '" aria-pressed="' + (T.sel===r.st.id) + '"><span>' + esc(r.st._name) + '<br><span class="small muted">' + (r.M.own!=null?r.M.own+'% own words · ':'') + r.M.decided + '/' + r.M.total + ' decided</span></span>' + (f?'<span class="badge rej">' + f + ' flag' + (f>1?'s':'') + '</span>':'<span class="badge acc">on track</span>') + '</button>'; }).join('') + '</div>'
-    + (flagged.length ? '<span class="mini-title">Needs attention</span>' + flagged.map(function(x){ return '<div class="flag"><div><b>' + esc(x.st._name) + '</b> · ' + esc(x.f[0].t) + '<div class="sug">Suggested: ' + esc(x.f[0].s) + '</div></div></div>'; }).join('') : '') + '</div>';
-  var cur = rows.filter(function(st){ return st.id===T.sel; })[0] || rows[0];
-  h += '<div class="panel">' + (cur ? studentDetail(cur) : '') + '</div></div>';
-  root.innerHTML = h;
+  return '<div class="strip"><div><b>' + rows.length + '</b><span>students</span></div><div><b>' + (ownN?Math.round(ownS/ownN)+'%':'—') + '</b><span>own words in revisions</span></div><div><b>' + ins + ' : ' + exe + '</b><span>help to understand : for answers</span></div><div><b>' + rs + '/' + dc + '</b><span>decisions with a reason</span></div></div>'
+    + '<div class="two"><section class="panel"><div class="phd"><h2>Which feedback gets lost</h2><span>not acted on or misread</span></div>' + bars.map(function(b){ return '<div class="hbar"><span>' + esc(TYPES[b.k]||b.k) + '</span><span class="t"><i style="width:' + b.v + '%"></i></span><span class="v">' + b.v + '%</span></div>'; }).join('') + (bars[0] ? '<p class="muted" style="font-size:12.5px">Consider a mini-lesson on <b style="color:var(--ink)">' + esc((TYPES[bars[0].k]||bars[0].k).toLowerCase()) + '</b>.</p>' : '') + '</section>'
+    + '<section class="panel"><div class="phd"><h2>How students respond</h2><span>coded replies, by source</span></div><div class="bars"><div class="barrow"><span>Peer</span>' + codeStack(cP) + '</div><div class="barrow"><span>AI</span>' + codeStack(cAI) + '</div></div>' + legend() + '</section></div>'
+    + '<section class="panel"><div class="phd"><h2>Needs a conversation</h2><span>' + flagged.length + ' of ' + rows.length + ' students</span></div>'
+    + (flagged.length ? flagged.map(function(x){ return '<div class="att"><span class="av me" aria-hidden="true">' + esc(x.st._name.replace('Student ','').slice(0,2)) + '</span><p><b>' + esc(x.st._name) + '</b> · ' + esc(x.f[0].t) + '<span>Suggested: ' + esc(x.f[0].s) + '</span></p><button class="btn secondary sm" data-act="pick-student" data-id="' + esc(x.st.id) + '">Open</button></div>'; }).join('') : '<p class="muted">Everyone is on track.</p>') + '</section>';
 }
 function studentDetail(st){
-  var M = metrics(st);
-  var h = '<div class="ph"><h2>' + esc(st._name) + '</h2>' + (st._demo?'<span class="demo-tag">example</span>':'<span class="small muted">submitted ' + new Date(st.savedAt).toLocaleString() + '</span>') + '</div>';
-  h += '<div class="tcols" style="padding:0"><div><span class="mini-title">AI support level over time</span>' + sparkline(M.trail, 300, 80) + '<p class="small muted">Falling line = support fading as the student explains accurately.</p></div><div class="codebars"><span class="mini-title">Replies by source</span><div class="cbrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="cbrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div><div class="kv"><span>Help: understand / answer</span><b>' + M.help.instrumental + ' / ' + M.help.executive + '</b></div><div class="kv"><span>Own words</span><b>' + (M.own!=null?M.own+'%':'—') + '</b></div></div></div>';
-  h += '<span class="mini-title">Feedback journeys · every claim links to the student\'s words</span><div class="scroll"><table><thead><tr><th>Feedback</th><th>Student said</th><th>Code</th><th>Decision</th><th>Revision</th><th>Reading</th></tr></thead><tbody>';
+  var M = metrics(st), f = flagsFor(st);
+  var h = '<button class="back" data-act="pick-student" data-id="">' + ICON.left + 'Class overview</button>'
+    + '<div class="strip"><div><b>' + esc(st._name) + '</b><span>' + (st._demo ? 'example student' : 'submitted ' + new Date(st.savedAt).toLocaleDateString()) + '</span></div><div><b>' + (M.own!=null?M.own+'%':'—') + '</b><span>own words</span></div><div><b>' + M.decided + '/' + M.total + '</b><span>comments decided</span></div><div><b>' + M.help.instrumental + ' : ' + M.help.executive + '</b><span>help: understand : answer</span></div></div>'
+    + '<div class="two"><section class="panel"><div class="phd"><h2>Coach support over time</h2><span>falling = fading</span></div>' + sparkline(M.trail) + '</section>'
+    + '<section class="panel"><div class="phd"><h2>How they responded</h2><span>by source</span></div><div class="bars"><div class="barrow"><span>Peer</span>' + codeStack(M.codes.peer) + '</div><div class="barrow"><span>AI</span>' + codeStack(M.codes.ai) + '</div></div>' + legend() + '</section></div>';
+  h += '<section class="panel"><div class="phd"><h2>Feedback journeys</h2><span>evidence quoted from the student</span></div><div class="tbl"><table><thead><tr><th>Comment</th><th>Student said</th><th>Engagement</th><th>Decision</th><th>Revision</th><th>Reading</th></tr></thead><tbody>';
   (st.items||[]).forEach(function(it){
     var turns = it.thread.map(function(t,i){ return {t:t,i:i}; }).filter(function(x){ return x.t.who==='student' && x.t.code; });
-    var last = turns[turns.length-1];
-    var key = last ? it.id + ':' + last.i : null, eff = last ? ((st.overrides||{})[key] || last.t.code) : null;
-    var q = quadrant(it);
-    h += '<tr><td><span class="src ' + it.source + '">' + (it.source==='ai'?'AI':'Peer') + '</span> ' + esc(TYPES[it.type]||it.type) + '</td><td>' + (last ? '“' + esc(last.t.evidence || last.t.text) + '”' : '<span class="muted">no reply</span>') + '</td><td>' + (last ? '<span class="override">' + codeChip(eff) + (canOverride(st) ? '<select aria-label="Override code" data-ovr="' + esc(key) + '" data-doc="' + esc(st._doc||'') + '">' + Object.keys(CODES).map(function(k){ return '<option' + (k===eff?' selected':'') + '>' + k + '</option>'; }).join('') + '</select>' : '') + '</span>' + (eff!==last.t.code?'<br><span class="small muted">teacher override</span>':'') : '—') + '</td><td>' + (it.decision ? esc(it.decision.kind) + (it.decision.reason?'<br><span class="small muted">“' + esc(it.decision.reason) + '”</span>':'') : '—') + '</td><td>' + (it.align ? esc(it.align.status) + (it.align.improved && it.align.improved!=='unclear' ? '<br><span class="small muted">improved: ' + esc(it.align.improved) + '</span>' : '') : '—') + '</td><td><b style="color:' + {good:'var(--ins)',warn:'var(--warn)',eval:'var(--c-eval)',other:'var(--muted)'}[q.tone] + '">' + esc(q.label) + '</b></td></tr>';
+    var last = turns[turns.length-1], key = last ? it.id + ':' + last.i : null, eff = last ? ((st.overrides||{})[key] || last.t.code) : null, q = quadrant(it);
+    h += '<tr><td><span style="display:inline-flex;align-items:center;gap:8px">' + avatar(it.source, it) + esc(TYPES[it.type]||it.type) + '</span></td>'
+      + '<td>' + (last ? '<q>“' + esc(last.t.evidence || last.t.text) + '”</q>' : '<span class="muted">No reply</span>') + '</td>'
+      + '<td>' + (last ? codeTag(eff) + (canOverride(st) ? '<br><select class="ovr" aria-label="Correct the code" data-ovr="' + esc(key) + '" data-doc="' + esc(st._doc||'') + '">' + Object.keys(CODES).map(function(k){ return '<option value="'+k+'"' + (k===eff?' selected':'') + '>' + SHORT[k] + '</option>'; }).join('') + '</select>' : '') + (eff!==last.t.code ? '<br><span class="muted" style="font-size:11.5px">corrected by teacher</span>' : '') : '—') + '</td>'
+      + '<td>' + (it.decision ? esc(it.decision.kind[0].toUpperCase()+it.decision.kind.slice(1)) + (it.decision.reason ? '<br><span class="muted" style="font-size:12px">“' + esc(it.decision.reason) + '”</span>' : '') : '<span class="muted">—</span>') + '</td>'
+      + '<td>' + (it.align ? esc(it.align.status) + (it.align.improved && it.align.improved!=='unclear' ? '<br><span class="muted" style="font-size:12px">improved: ' + esc(it.align.improved) + '</span>' : '') : '—') + '</td>'
+      + '<td><span class="verdict ' + q.tone + '">' + esc(q.label) + '</span></td></tr>';
   });
-  h += '</tbody></table></div>';
-  var f = flagsFor(st);
-  if (f.length) h += '<div><span class="mini-title">Suggested next steps</span>' + f.map(function(x){ return '<div class="flag" style="margin-top:6px"><div>' + esc(x.t) + '<div class="sug">' + esc(x.s) + '</div></div></div>'; }).join('') + '</div>';
-  if (st.reflection && (st.reflection.changed || st.reflection.kept || st.reflection.ai)) h += '<div><span class="mini-title">Reflection</span><p class="small"><b>Changed:</b> ' + esc(st.reflection.changed) + '</p><p class="small"><b>Kept:</b> ' + esc(st.reflection.kept) + '</p><p class="small"><b>Peer vs AI:</b> ' + esc(st.reflection.ai) + '</p></div>';
+  h += '</tbody></table></div></section>';
+  if (f.length) h += '<section class="panel"><h2>Suggested next steps</h2>' + f.map(function(x){ return '<div class="att"><span style="color:var(--warn)">' + ICON.info + '</span><p>' + esc(x.t) + '<span>' + esc(x.s) + '</span></p><span></span></div>'; }).join('') + '</section>';
+  if (st.reflection && (st.reflection.changed || st.reflection.kept || st.reflection.ai)) h += '<section class="panel"><h2>Reflection</h2><p style="font-size:13.5px"><b>Changed.</b> ' + esc(st.reflection.changed) + '</p><p style="font-size:13.5px"><b>Kept.</b> ' + esc(st.reflection.kept) + '</p><p style="font-size:13.5px"><b>Peer vs AI.</b> ' + esc(st.reflection.ai) + '</p></section>';
   return h;
 }
 function canOverride(st){ return st._demo || (me.canEdit && db && st._doc); }
+
+/* ================= events ================= */
+function render(){ if (VIEW==='student') renderStudent(); else renderTeacher(); }
+document.addEventListener('input', function(e){
+  var t = e.target;
+  if (t.tagName === 'TEXTAREA') grow(t);
+  if (t.dataset.bind){ S[t.dataset.bind] = t.value; save();
+    if (t.dataset.bind==='draft'){ var wc = $('#wc'); if (wc) wc.textContent = words(t.value); var b = $('[data-act="start"]'); if (b) b.disabled = words(t.value)<15; }
+    if (t.dataset.bind==='revision'){ var wc2 = $('#wc'); if (wc2) wc2.textContent = words(t.value); var o = ownershipLive(); var ol = $('#ownlive'); if (ol) ol.textContent = o + '%'; }
+  }
+  if (t.dataset.reason){ var it = itemById(t.dataset.reason); if (it && it.decision){ it.decision.reason = t.value; save(); } }
+  if (t.dataset.refl){ S.reflection[t.dataset.refl] = t.value; save(); }
+});
 document.addEventListener('change', function(e){
-  var s = e.target; if (!s.dataset || !s.dataset.ovr) return;
-  var rows = classRows(), st = rows.filter(function(r){ return r.id===T.sel; })[0] || rows[0]; if (!st) return;
-  st.overrides = st.overrides || {}; st.overrides[s.dataset.ovr] = s.value;
-  if (!st._demo && db && s.dataset.doc){ db.doc('sessions/' + s.dataset.doc).update({ overrides: st.overrides }).catch(function(){}); }
-  renderTeacher();
+  var t = e.target;
+  if (t.id === 'pause'){ S.paused = t.checked; save(); renderStudent(); return; }
+  if (t.dataset && t.dataset.ovr){
+    var rows = classRows(), st = rows.filter(function(r){ return r.id===T.sel; })[0]; if (!st) return;
+    st.overrides = st.overrides || {}; st.overrides[t.dataset.ovr] = t.value;
+    if (!st._demo && db && t.dataset.doc) db.doc('sessions/' + t.dataset.doc).update({ overrides: st.overrides }).catch(function(){ toast('Could not save the correction.'); });
+    renderTeacher();
+  }
+});
+document.addEventListener('keydown', function(e){
+  var t = e.target;
+  if (t.dataset && t.dataset.reply && e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendTurn(t.dataset.reply, t.value); return; }
+  if (t.classList && t.classList.contains('anc') && (e.key==='Enter' || e.key===' ')){ e.preventDefault(); t.click(); }
+  if (e.key === 'Escape'){ if (UI.drawer){ UI.drawer=false; renderDrawer(); } else if (UI.pop){ UI.pop=false; renderTop(); } }
+});
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]');
+  if (UI.pop && !e.target.closest('.pop') && !(b && b.dataset.act==='toggle-pop')){ UI.pop = false; UI.confirmReset = false; renderTop(); }
+  if (!b) return;
+  var a = b.dataset.act, id = b.dataset.id;
+  if (a==='home'){ e.preventDefault(); return; }
+  if (a==='view'){ VIEW = b.dataset.view; UI.drawer=false; render(); window.scrollTo(0,0); return; }
+  if (a==='open-drawer'){ UI.drawer = true; renderDrawer(); var c = $('#drawer .iconbtn'); if (c) c.focus(); return; }
+  if (a==='close-drawer'){ UI.drawer = false; renderDrawer(); return; }
+  if (a==='toggle-pop'){ UI.pop = !UI.pop; UI.confirmReset=false; renderTop(); return; }
+  if (a==='style'){ S.style = b.dataset.style; save(); renderTop(); return; }
+  if (a==='reset'){ if (UI.confirmReset){ S = fresh(); save(); UI.pop=false; UI.confirmReset=false; renderStudent(); window.scrollTo(0,0); } else { UI.confirmReset = true; renderTop(); } return; }
+  if (a==='start') startFeedback();
+  else if (a==='sample'){ S.draft = SAMPLE; save(); renderStudent(); }
+  else if (a==='open'){ S.open = S.open===id && b.tagName==='BUTTON' ? null : id; save(); renderStudent(); var card = document.getElementById('card-'+id); if (card && b.tagName==='MARK') card.scrollIntoView({block:'nearest', behavior:'smooth'}); }
+  else if (a==='lane'){ S.lane = b.dataset.lane; save(); renderStudent(); }
+  else if (a==='send'){ var ta = document.querySelector('[data-reply="' + id + '"]'); if (ta && ta.value.trim()) sendTurn(id, ta.value); }
+  else if (a==='help') sendTurn(id, '', b.dataset.kind);
+  else if (a==='decide'){ var it = itemById(id); it.decision = {kind:b.dataset.kind, reason:(it.decision&&it.decision.reason)||'', at:Date.now()}; save(); renderStudent(); var inp = document.getElementById('reason-'+id); if (inp && b.dataset.kind==='reject') inp.focus(); }
+  else if (a==='toggle-addpeer'){ UI.addPeer = !UI.addPeer; renderStudent(); }
+  else if (a==='add-peer'){ var before = S.items.length; addPeer(); if (S.items.length>before) S.items[S.items.length-1].peerName = 'Classmate'; UI.addPeer = false; save(); renderStudent(); }
+  else if (a==='to-revise'){ S.step = 3; if (!S.revision) S.revision = S.draft; save(); renderStudent(); window.scrollTo(0,0); }
+  else if (a==='goto'){ S.step = +b.dataset.step; save(); renderStudent(); window.scrollTo(0,0); }
+  else if (a==='analyse'){ analyse(); window.scrollTo(0,0); }
+  else if (a==='to-reflect'){ S.step = 5; save(); renderStudent(); window.scrollTo(0,0); }
+  else if (a==='submit') submit();
+  else if (a==='pick-student'){ T.sel = id || null; renderTeacher(); window.scrollTo(0,0); }
+  else if (a==='src'){ T.src = b.dataset.src; T.sel = null; renderTeacher(); }
 });
 
-/* ================= tabs ================= */
-Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
-  t.addEventListener('click', function(){
-    var v = t.dataset.view;
-    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(x){ x.setAttribute('aria-selected', x===t ? 'true' : 'false'); });
-    $('#view-student').hidden = v!=='student'; $('#view-teacher').hidden = v!=='teacher';
-    if (v==='teacher') renderTeacher();
-  });
-});
+/* track which item is waiting on the coach */
+var _send = sendTurn;
+sendTurn = function(id, text, help){ S.busyItem = id; _send(id, text, help); };
 
-renderStudent(); renderTeacher();
+render();
 })();
 </script>
