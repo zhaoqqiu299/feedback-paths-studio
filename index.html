@@ -1112,6 +1112,8 @@ ICON.mic = '<svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" heigh
 ICON.cam = '<svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>';
 ICON.dot = '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>';
 function canRecord(){ return !REC.denied && (REC.media || (!!Voice.d && !Voice.disabled)); }
+function realWords(s){ return String(s||'').trim().split(/\s+/).filter(function(w){ w = w.replace(/^[^A-Za-z]+|[^A-Za-z]+$/g, ''); return w.length >= 1 && w.length <= 20 && /^[A-Za-z'’-]+$/.test(w) && /[aeiouyAEIOUY]/.test(w) && !/(.)\1\1/.test(w); }).length; }
+function typedHint(s){ var n = realWords(s); return n >= 3 ? 'Ready to submit.' : 'Write at least 3 real English words (' + n + '/3).'; }
 function fmt(s){ s = Math.max(0, Math.round(s||0)); return Math.floor(s/60) + ':' + ('0' + (s%60)).slice(-2); }
 function checkDone(){ return !!(S.check && (S.check.none || S.check.finished)); }
 function weightedPick(c){ var tot = c.reduce(function(a,x){ return a+x.w; },0), r = Math.random()*tot; for (var i=0;i<c.length;i++){ r -= c[i].w; if (r<=0) return c[i]; } return c[c.length-1]; }
@@ -1209,10 +1211,11 @@ function recorder(field){
       + '<div class="lock-foot" style="width:100%">' + (C['redo'+n] < 1 && r.kind!=='typed' ? '<button class="btn quiet sm" data-act="rec-redo" data-field="' + field + '">Re-record (once)</button>' : '<span></span>') + '<button class="btn primary" data-act="part-submit" data-field="' + field + '">' + (n===1 ? 'Submit answer' : 'Submit final answer') + ' ' + ICON.arrow + '</button></div></div>';
   }
   if (!canRecord()){
-    var val = C[field] || '';
-    return '<div class="recorder"><p class="warnbar" style="width:100%">Recording isn’t available on this device' + (REC.denied ? ' (access was blocked)' : '') + '. Type your answer instead. Your teacher will see that it was typed.</p>'
-      + '<label class="sr" for="ftyped-' + field + '">Your answer</label><textarea class="ftyped" id="ftyped-' + field + '" data-ftyped="' + field + '" placeholder="Type your answer…">' + esc(val) + '</textarea>'
-      + '<div class="lock-foot" style="width:100%"><span></span><button class="btn primary" data-act="typed-submit" data-field="' + field + '" ' + (words(val)<3?'disabled':'') + '>Submit answer ' + ICON.arrow + '</button></div></div>';
+    var val = C[field] || '', blocked = REC.why === 'blocked';
+    return '<div class="recorder"><p class="warnbar" style="width:100%">' + (blocked ? 'Microphone access was blocked.' : 'Recording isn’t supported on this device or browser.') + ' You can type your answer instead. Your teacher will see that it was typed.</p>'
+      + (blocked ? '<div style="display:grid; gap:6px; justify-items:center"><button class="btn secondary sm" data-act="rec-retry" data-field="' + field + '">' + ICON.mic + ' Try recording again</button><span class="recnote">First allow the microphone for this site: click the icon at the left of the address bar, choose Allow, then try again.</span></div>' : '')
+      + '<label class="sr" for="ftyped-' + field + '">Your answer</label><textarea class="ftyped" id="ftyped-' + field + '" data-ftyped="' + field + '" placeholder="Type your answer in full sentences…" aria-describedby="ftyped-hint">' + esc(val) + '</textarea>'
+      + '<div class="lock-foot" style="width:100%"><span class="recnote" id="ftyped-hint" aria-live="polite">' + typedHint(val) + '</span><button class="btn primary" data-act="typed-submit" data-field="' + field + '" ' + (realWords(val)<3?'disabled':'') + '>Submit answer ' + ICON.arrow + '</button></div></div>';
   }
   var modes = REC.media ? '<div class="seg" role="group" aria-label="Recording type"><button data-act="rec-kind" data-kind="audio" aria-pressed="' + (REC.kind!=='video') + '">' + ICON.mic + ' Audio</button><button data-act="rec-kind" data-kind="video" aria-pressed="' + (REC.kind==='video') + '">' + ICON.cam + ' Video</button></div>' : '<span class="recnote">' + ICON.mic + ' Your answer is recorded as speech and transcribed.</span>';
   return '<div class="recorder">' + modes + '<button class="recbtn" data-act="rec-start" data-field="' + field + '" aria-label="Start recording">' + ICON.mic + '</button><span class="recnote">Think first, then press to record. Up to ' + fmt(MAXREC) + '. Speak in English, in your own words.</span></div>';
@@ -1270,7 +1273,7 @@ function startRec(field){
   if (REC.media){
     var kind = REC.kind === 'video' ? 'video' : 'audio';
     navigator.mediaDevices.getUserMedia(kind==='video' ? {audio:true, video:{facingMode:'user', width:{ideal:640}, height:{ideal:480}}} : {audio:true}).then(function(stream){
-      var mr; try { mr = new MediaRecorder(stream); } catch(e){ stream.getTracks().forEach(function(t){ t.stop(); }); REC.denied = true; toast('This browser cannot record. Type your answer instead.'); renderLock(); return; }
+      var mr; try { mr = new MediaRecorder(stream); } catch(e){ stream.getTracks().forEach(function(t){ t.stop(); }); REC.denied = true; REC.why = 'unsupported'; toast('This browser cannot record. Type your answer instead.'); renderLock(); return; }
       REC.stream = stream; REC.mr = mr; REC.chunks = []; REC.kind = kind;
       mr.ondataavailable = function(e){ if (e.data && e.data.size) REC.chunks.push(e.data); };
       mr.onstop = function(){
@@ -1280,12 +1283,12 @@ function startRec(field){
         setTimeout(function(){ finishRec(field); }, REC.SR ? 600 : 0);
       };
       mr.start(250); REC.state = 'recording'; REC.t0 = Date.now(); tick(); renderLock(); if (kind==='audio') meterStart(stream); srStart();
-    }).catch(function(){ REC.denied = true; toast('Microphone' + (kind==='video'?' or camera':'') + ' access was blocked. Type your answer instead.'); renderLock(); });
+    }).catch(function(err){ REC.denied = true; var nm = err && err.name; REC.why = (nm==='NotAllowedError' || nm==='SecurityError') ? 'blocked' : 'unsupported'; toast(REC.why==='blocked' ? 'Microphone' + (kind==='video'?' or camera':'') + ' access was blocked. You can try again or type your answer.' : 'No ' + (kind==='video'?'camera or ':'') + 'microphone was found. Type your answer instead.'); renderLock(); });
     return;
   }
   if (Voice.d){
     REC.kind = 'speech'; REC.state = 'recording'; REC.t0 = Date.now();
-    Voice.d.start().catch(function(err){ if (REC.state !== 'recording') return; REC.state = 'idle'; clearInterval(REC.timer); if (err && (err.code==='not_granted' || err.code==='unavailable')){ Voice.disabled = true; REC.denied = true; toast('Voice input is off for this page. Type your answer instead.'); } else if (err && err.code!=='stopped') toast('Could not start recording. Try again.'); renderLock(); });
+    Voice.d.start().catch(function(err){ if (REC.state !== 'recording') return; REC.state = 'idle'; clearInterval(REC.timer); if (err && (err.code==='not_granted' || err.code==='unavailable')){ Voice.disabled = true; REC.denied = true; REC.why = err.code==='not_granted' ? 'blocked' : 'unsupported'; toast(err.code==='not_granted' ? 'Microphone access was blocked. You can try again or type your answer.' : 'Voice input is not available here. Type your answer instead.'); } else if (err && err.code!=='stopped') toast('Could not start recording. Try again.'); renderLock(); });
     tick(); renderLock();
   }
 }
@@ -1359,7 +1362,8 @@ function lockClick(b){
   else if (a === 'rec-kind'){ REC.kind = b.dataset.kind; renderLock(); }
   else if (a === 'rec-redo'){ var n = f==='a1'?1:2; if (S.check['redo'+n] >= 1) return; S.check['redo'+n]++; S.check['r'+n] = null; S.check[f] = ''; if (REC.url[f]){ URL.revokeObjectURL(REC.url[f]); delete REC.url[f]; } save(); renderLock(); }
   else if (a === 'part-submit') submitPart(f);
-  else if (a === 'typed-submit'){ var n2 = f==='a1'?1:2; if (words(S.check[f]||'') < 3) return; S.check['r'+n2] = { kind:'typed', dur:0, transcript:true, fallback:true }; save(); submitPart(f); }
+  else if (a === 'rec-retry'){ REC.denied = false; REC.why = null; Voice.disabled = false; startRec(f); }
+  else if (a === 'typed-submit'){ var n2 = f==='a1'?1:2; if (realWords(S.check[f]||'') < 3) return; S.check['r'+n2] = { kind:'typed', dur:0, transcript:true, fallback:true }; save(); submitPart(f); }
   else if (a === 'check-final') finishCheck();
 }
 document.addEventListener('visibilitychange', function(){
@@ -1428,7 +1432,7 @@ document.addEventListener('input', function(e){
   }
   if (t.dataset.reason){ var it = itemById(t.dataset.reason); if (it && it.decision){ it.decision.reason = t.value; save(); } }
   if (t.dataset.refl){ S.reflection[t.dataset.refl] = t.value; save(); }
-  if (t.dataset.ftyped && S.check){ S.check[t.dataset.ftyped] = t.value; save(); var sb = document.querySelector('[data-act="typed-submit"]'); if (sb) sb.disabled = words(t.value) < 3; }
+  if (t.dataset.ftyped && S.check){ S.check[t.dataset.ftyped] = t.value; save(); var sb = document.querySelector('[data-act="typed-submit"]'); if (sb) sb.disabled = realWords(t.value) < 3; var hi = document.getElementById('ftyped-hint'); if (hi) hi.textContent = typedHint(t.value); }
 });
 document.addEventListener('change', function(e){
   var t = e.target;
